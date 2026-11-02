@@ -35,6 +35,10 @@ def constrain(grid, base, target, weights, response, smoothing, continuity, prog
     target_lab = tools.lab(desired).detach()
     output_penalty = TensorPenalty(bank, tools, amount)
     edge = tools.tensor(edges((5, 9, 9)), True)
+    actual_penalty = None
+    if isinstance(response,dict):
+        from grid_regularization import get_penalty
+        actual_penalty = get_penalty(response)
 
     # Native output is fixed, so cache coordinates and the response at each row.
     def renderer(rgb, original):
@@ -43,8 +47,7 @@ def constrain(grid, base, target, weights, response, smoothing, continuity, prog
             model = get(response)
             if not hasattr(model, 'affine'):
                 raise ValueError('Output continuity requires the R5 paired grid response')
-            affine = tools.tensor(model.affine)
-            coords = rgb @ affine[:, :3].T + affine[:, 3]
+            coords = model.coordinates_tensor(tools,rgb)
             mixing = tools.tensor(model.response(np.asarray(original)))
         else:
             coords = provisional_coordinates(tools, rgb)
@@ -63,7 +66,8 @@ def constrain(grid, base, target, weights, response, smoothing, continuity, prog
         loss = (((pred - desired).square().mean(dim=1) +
             ((tools.lab(pred) - target_lab) / 100).square().sum(dim=1) * .35) * mass).sum()
         if smoothing:
-            loss = loss + (table[edge[:, 1]] - table[edge[:, 0]]).square().sum() * (.01 * multiplier(smoothing)) / (405 * 3 * 256**2)
+            loss = loss + (actual_penalty.tensor_loss(tools,table,smoothing) if actual_penalty is not None else
+                (table[edge[:, 1]] - table[edge[:, 0]]).square().sum() * (.01 * multiplier(smoothing)) / (405 * 3 * 256**2))
         loss = loss + output_penalty.loss(render_probes(table))
         loss.backward()
         value = float(loss.detach().cpu())
@@ -74,14 +78,14 @@ def constrain(grid, base, target, weights, response, smoothing, continuity, prog
 
     def exact_cost(table):
         rows = display_cost_rows(evaluate(base, table, response), target, .35)
-        return float(rows @ np.asarray(weights) / np.sum(weights)) + grid_cost(table, smoothing) + penalty(table, response, continuity)
+        return float(rows @ np.asarray(weights) / np.sum(weights)) + grid_cost(table, smoothing,response=response) + penalty(table, response, continuity)
     original = np.array(grid, dtype=np.int8, copy=True)
     # Independent float64 value gate before trusting the accelerated gradient.
     from perceptual import to_lab
     prediction=evaluate(base,original,response)
     data=np.mean((prediction-np.clip(target,0,1))**2,axis=1)
     data+=.35*np.sum(((to_lab(prediction*255)-to_lab(np.clip(target,0,1)*255))/100)**2,axis=1)
-    expected=float(data@np.asarray(weights)/np.sum(weights))+(grid_cost(original,smoothing)+penalty(original,response,continuity))/255**2
+    expected=float(data@np.asarray(weights)/np.sum(weights))+(grid_cost(original,smoothing,response=response)+penalty(original,response,continuity))/255**2
     value,_=value_gradient(original.astype(float).ravel())
     if abs(value-expected)>max(1e-8,abs(expected)*1e-4):
         raise ValueError(f'Grid continuity loss gate failed: {value} versus {expected}')

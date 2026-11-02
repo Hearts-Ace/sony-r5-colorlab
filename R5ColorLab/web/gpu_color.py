@@ -37,15 +37,11 @@ def paired_tensor(tools, rgb, grid, response):
     model = get(response)
     if not hasattr(model, 'affine'):
         raise ValueError('GPU paired renderer requires the R5 affine response snapshot')
-    affine = tools.tensor(model.affine)
-    coordinates = rgb @ affine[:, :3].T + affine[:, 3]
+    coordinates = model.coordinates_tensor(tools, rgb)
     indices, weights = stencil_tensor(tools, coordinates)
     delta = (grid[indices] * weights[:, :, None]).sum(dim=1)
-    matrix = tools.tensor(model.weights[:3]).expand(len(rgb), 3, 3)
-    if model.smooth:
-        matrix = matrix + tools.torch.einsum('nj,cjo->nco', rgb - .5,
-            tools.tensor(model.weights[3:].reshape(3, 3, 3)))
-    return (rgb + tools.torch.einsum('nc,nco->no', delta, matrix / 256)).clamp(0, 1)
+    matrix = model.response_tensor(tools, rgb)
+    return (rgb + tools.torch.einsum('nc,nco->no', delta, matrix)).clamp(0, 1)
 
 
 def paired_numpy(rgb, grid, response, exact_display=False):

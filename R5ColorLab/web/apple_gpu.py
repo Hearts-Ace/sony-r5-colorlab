@@ -105,11 +105,10 @@ def initialize(smooth,seed,target,weights,lower,upper,*,steps=600,
             loss=(((pred-y)**2).mean(dim=1)*mass).sum()
             if perceptual_weight:
                 loss=loss+(((gpu.lab(pred)-target_lab)/100)**2).sum(dim=1).mul(mass).sum()*perceptual_weight
-            coeff=v[8:104].reshape(6,16)
-            curvature=torch.roll(coeff,1,1)-2*coeff+torch.roll(coeff,-1,1)
-            dx=torch.diff(gpu.axis/gpu.axis[-1]);gy=gpu.gamma(v)/16383
-            gc=torch.diff(torch.diff(gy)/dx)*(dx[:-1]+dx[1:])/2
-            loss=loss+(curvature.square().mean()*.02**2+gc.square().mean()*16**2)*(parameter_smoothing/100)
+            from parameter_smoothing import native_rows_tensor
+            regularization=native_rows_tensor(gpu,v[8:104],gpu.gamma(v)*16,gpu.axis,
+                parameter_smoothing,cc1=v[:8],config=smooth.ctx.base.config)
+            loss=loss+regularization.square().sum()
             if continuity is not None:loss=loss+continuity.loss(probe_gpu.render(v)/16383)
             return loss
         for step in range(steps):

@@ -9,7 +9,7 @@ class MeasuredResponseTests(unittest.TestCase):
     def test_pinned_r5_and_zero_anchor(self):
         response=default_response();model=get(response)
         self.assertFalse(model.proxy)
-        self.assertEqual(response['preset'],'r5-paired-20261024-v2')
+        self.assertEqual(response['preset'],'r5-paired-20261102-three-experts')
         self.assertTrue(get(legacy_proxy_response()).proxy)
         x=model.probes(30)
         np.testing.assert_allclose(evaluate(x,np.zeros((405,3),np.int8),response),x,atol=2e-15)

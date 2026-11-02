@@ -3812,6 +3812,9 @@
   "data/training/frontend_capture/1992-synthetic-final-2-0x7226535d0-ch2.bin": "a92d95b73ade28d4c5273d90aa68959faf1a962425553da712fbcb401a1ea492",
   "data/training/frontend_capture/report.json": "dcc07a50f9269af34c323755be3f5fb6965b4002ef24cd252e513c830abd69df",
   "data/training/pairs.npz": "77cbb211f63053f05a0cefaa58dc254d98c9b4c67e090845bb01b7fd23711e7f",
+  "tests/fixtures/response-provenance/old-paired.py": "c5d74177d5466149e7d7cb86214d4ca3e152d6e9ba7ad87a3227fb45bdba5940",
+  "tests/fixtures/response-provenance/old-registry-nonlinear.py": "2ee8128f87491ac15e1885e32594620aa04c92aa7a4acd8bf15977fa5ce27ac5",
+  "tests/fixtures/response-provenance/old-registry-v2.py": "ac25d665dde7fc285affb4be1a862a647c767e339cea0aa4b756e77693199428",
   "web/data/chart/sony100mp_5300k_v45/GFX100SII-v4.5-100MP-5300K.RAF.gz": "a32b0ec65fe78a3701fe5fa5569f595b9ae2e2b23469d1e219901c2650aa0ff9",
   "web/data/chart/sony100mp_5300k_v45/SONY-v4.5-100MP-5300K.ARW.gz": "a171c818fd256f47168b72a6c88c626086452ed117558ce60fa9772aa52f2032",
   "web/data/chart/sony100mp_5300k_v45/SONY-v4.5-100MP-5300K.DNG.gz": "379cc86e0222b963596c51b83fdaf8ee6fcfce7ae1cc36c6fc06275ff9e04056",
@@ -3838,8 +3841,10 @@
   "web/data/qaq/LICENSE": "c592870a8504689cbe03449c2ae582ba6517716c9e0cd2f880cea50c187d16e9",
   "web/data/qaq/PROVENANCE.md": "dcdc4516e9a485285162348c0cc1f50841822754143cf066a387c2586bf13c8a",
   "web/data/qaq/a7c2-2.01.virtual.npz": "7e183f46f7acd739a12b7c2989e0ce245628a1f0d72d4f673f48945f4493b0af",
-  "web/data/r5/PROVENANCE.md": "29151f7c22b3fce47eff123f0fb7021ce85c0dd76977ada573da1a242b34d090",
+  "web/data/r5/PROVENANCE.md": "91d8f8f09d57082965db6894f655b68404b77732ea5ebc8d62afd2ea0cbe6bb9",
   "web/data/r5/paired-20261024-v2.json": "8879499fbd9b24899dcbd8fee4135b806fdcba1fd18a677b090b7af212b85a45",
   "web/data/r5/paired-20261024.json": "6852ead83bf381215a8d721d1557cc73803f6ef60a0745971e8783144863c96b",
+  "web/data/r5/paired-20261102-nonlinear.json": "a312761c8500e8a9ecb3b1b23ad27cf7709cb6eb8bf41c956970e1bdcc2c82f0",
+  "web/data/r5/paired-20261102-three-experts.json": "3cecec3387acbd72524be42db34586237df0c2c7d458d4090467375d28fa0815",
   "web/data/stock_grids423.json": "dda8140f032181e86f59124f835695426cd2b18a83461982204786dd8a2cb0a5"
 }

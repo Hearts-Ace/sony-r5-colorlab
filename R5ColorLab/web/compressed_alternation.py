@@ -31,11 +31,9 @@ def residual(smooth, target, weights, native_start, grid, response, vector,
     predicted = get(response).predict_cpu(smooth.render(vector)/16383, grid)
     data = smooth_loss_rows(predicted, np.asarray(target)/16383, perceptual_weight)
     coefficients = vector[8:104].reshape(6,16)
-    hue = np.roll(coefficients,1,axis=1)-2*coefficients+np.roll(coefficients,-1,axis=1)
     smoothing = native_rows(coefficients, smooth.gamma(vector)*16,
-        smooth.ctx.axis, parameter_smoothing)*np.sqrt(len(weights))
-    return np.r_[(data*np.sqrt(weights)[:,None]).ravel(), hue.ravel()*.003,
-        (vector[:8]-native_start[:8])*.003, smoothing]
+        smooth.ctx.axis, parameter_smoothing,cc1=vector[:8],config=smooth.ctx.base.config)*np.sqrt(len(weights))
+    return np.r_[(data*np.sqrt(weights)[:,None]).ravel(), smoothing]
 
 
 def optimize_native(smooth, target, weights, native_start, grid, response, vector,

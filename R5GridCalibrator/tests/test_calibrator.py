@@ -141,7 +141,12 @@ class HTTPTests(unittest.TestCase):
                     time.sleep(.1)
                 self.assertEqual(state['state'],'done',state)
                 self.assertLess(state['result']['report']['test']['rmse'],1)
-                exported=zipfile.ZipFile(io.BytesIO(req('/api/export/'+jid)));self.assertIn('model.py',exported.namelist())
+                exported=zipfile.ZipFile(io.BytesIO(req('/api/export/'+jid)));self.assertIn('model.py',exported.namelist());self.assertIn('quality.py',exported.namelist())
+                self.assertIn('stock_reference.py',exported.namelist())
+                stock_meta=json.loads(exported.read('data/r5-stock-02a40004.json'))
+                stock_raw=exported.read('data/'+stock_meta['filename'])
+                self.assertEqual(len(stock_raw),stock_meta['bytes'])
+                self.assertEqual(hashlib.sha256(stock_raw).hexdigest(),stock_meta['sha256'])
                 with self.assertRaises(urllib.error.HTTPError):req('/api/bin',{'bin':encoded(raw)},'https://other.example')
                 self.assertIn('网格'.encode(),req('/'))
             finally:http.shutdown();http.server_close();server.DATA=old

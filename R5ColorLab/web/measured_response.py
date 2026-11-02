@@ -8,6 +8,7 @@ import json
 from functools import lru_cache
 import sys
 from pathlib import Path
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"vendor/fit_eval_python312"))
 import numpy as np
 from scipy.interpolate import NdBSpline
 from scipy.optimize import least_squares
@@ -24,8 +25,16 @@ def previous_r5_response():
     return {'schema': 'r5-measured-grid-response/1', 'preset': 'r5-paired-20261024', 'sha256': '6852ead83bf381215a8d721d1557cc73803f6ef60a0745971e8783144863c96b', 'model': 'ILCE-7RM5'}
 
 
-def default_response():
+def v2_response():
     return {'schema': 'r5-measured-grid-response/1', 'preset': 'r5-paired-20261024-v2', 'sha256': '8879499fbd9b24899dcbd8fee4135b806fdcba1fd18a677b090b7af212b85a45', 'model': 'ILCE-7RM5'}
+
+
+def nonlinear_response():
+    return dict(schema=SCHEMA,preset='r5-paired-20261102-nonlinear',sha256='a312761c8500e8a9ecb3b1b23ad27cf7709cb6eb8bf41c956970e1bdcc2c82f0',model='ILCE-7RM5')
+
+
+def default_response():
+    return dict(schema=SCHEMA,preset='r5-paired-20261102-three-experts',sha256='3cecec3387acbd72524be42db34586237df0c2c7d458d4090467375d28fa0815',model='ILCE-7RM5')
 
 
 def is_measured(value):
@@ -42,15 +51,27 @@ def get(value):
         raise ValueError('Unknown measured grid response schema')
     return _cached(json.dumps(value, sort_keys=True, allow_nan=False, separators=(',', ':')))
 
-@lru_cache(maxsize=4)
+@lru_cache(maxsize=8)
 def _cached(serialized):
     value = json.loads(serialized)
+    if value.get('preset')=='r5-paired-20261102-three-experts':
+        if value!=default_response():raise ValueError('R5 three-expert snapshot identity mismatch')
+        raw=(__import__('pathlib').Path(__file__).resolve().parent/'data/r5/paired-20261102-three-experts.json').read_bytes()
+        if hashlib.sha256(raw).hexdigest()!=value['sha256']:raise ValueError('R5 three-expert model hash mismatch')
+        from paired_response import PairedModel
+        return PairedModel(json.loads(raw),value['sha256'],identity=value)
+    if value.get('preset')=='r5-paired-20261102-nonlinear':
+        if value!=nonlinear_response():raise ValueError('R5 nonlinear snapshot identity mismatch')
+        raw=(__import__('pathlib').Path(__file__).resolve().parent/'data/r5/paired-20261102-nonlinear.json').read_bytes()
+        if hashlib.sha256(raw).hexdigest()!=value['sha256']:raise ValueError('R5 nonlinear model hash mismatch')
+        from paired_response import PairedModel
+        return PairedModel(json.loads(raw),value['sha256'],identity=value)
     if value.get('preset')=='r5-paired-20261024-v2':
-        if value!=default_response():raise ValueError('R5 v2 snapshot identity mismatch')
+        if value!=v2_response():raise ValueError('R5 v2 snapshot identity mismatch')
         raw=(__import__('pathlib').Path(__file__).resolve().parent/'data/r5/paired-20261024-v2.json').read_bytes()
         if hashlib.sha256(raw).hexdigest()!=value['sha256']:raise ValueError('R5 v2 model hash mismatch')
         from paired_response import PairedModel
-        return PairedModel(json.loads(raw),value['sha256'])
+        return PairedModel(json.loads(raw),value['sha256'],identity=value)
     if value.get('preset')=='r5-paired-20261024':
         if value!=previous_r5_response():raise ValueError('R5 snapshot identity mismatch')
         from pathlib import Path
@@ -58,7 +79,7 @@ def _cached(serialized):
         raw=path.read_bytes()
         if hashlib.sha256(raw).hexdigest()!=value['sha256']:raise ValueError('R5 measured model hash mismatch')
         from paired_response import PairedModel
-        return PairedModel(json.loads(raw),value['sha256'])
+        return PairedModel(json.loads(raw),value['sha256'],identity=value)
     if value.get('preset'):
         from pathlib import Path
         if value != legacy_proxy_response():raise ValueError('Unknown proxy snapshot identity')
@@ -77,6 +98,105 @@ def _cached(serialized):
     if len(serialized) > 16 * 1024 * 1024:
         raise ValueError('标定模型过大')
     return Model(value, hashlib.sha256(serialized.encode()).hexdigest())
+
+
+# These are the two registry implementations recorded by retained formal jobs.
+# Their original source copies and a legacy-class oracle are independently
+# checked in test_response_provenance; this is not a general hash bypass.
+_LEGACY_RESPONSE_IMPLEMENTATIONS = {
+    'r5-paired-20261024-v2': frozenset({'ac25d665dde7fc285affb4be1a862a647c767e339cea0aa4b756e77693199428'}),
+    'r5-paired-20261102-nonlinear': frozenset({'2ee8128f87491ac15e1885e32594620aa04c92aa7a4acd8bf15977fa5ce27ac5'}),
+}
+# Set only after the preserved legacy oracle and CPU/Torch parity tests pass.
+_LEGACY_VERIFIED_INFERENCE_SHA256 = '47b0581148727a1e5d476d1881a75742296a001e071a3c388bd6dff68a78c9d4'
+
+
+def _inference_ast(path, names=None):
+    """Hash executable inference AST; fitting/regularizer edits are irrelevant.
+
+    Imports are included, docstrings/comments are excluded. Explicit method and
+    constant names keep a training-only change from invalidating a frozen grid.
+    """
+    import ast
+    class WithoutDocstrings(ast.NodeTransformer):
+        def generic_visit(self, node):
+            node = super().generic_visit(node)
+            if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+                if node.body and isinstance(node.body[0], ast.Expr) and isinstance(node.body[0].value, ast.Constant) and isinstance(node.body[0].value.value, str):
+                    node.body = node.body[1:]
+            return node
+    tree = WithoutDocstrings().visit(ast.parse(path.read_text()))
+    if names is None:
+        selected = tree.body
+    else:
+        selected = [node for node in tree.body if isinstance(node, (ast.Import, ast.ImportFrom))]
+        by_name = {}
+        for node in tree.body:
+            if isinstance(node, (ast.FunctionDef, ast.ClassDef)):
+                by_name[node.name] = node
+                if isinstance(node, ast.ClassDef):
+                    for method in node.body:
+                        if isinstance(method, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                            by_name[node.name + '.' + method.name] = method
+            elif isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name): by_name[target.id] = node
+        for name in names:
+            if name not in by_name: raise ValueError('Missing response inference source: ' + name)
+            selected.append(by_name[name])
+    value = ast.dump(ast.Module(body=selected, type_ignores=[]), include_attributes=False)
+    return hashlib.sha256(value.encode()).hexdigest()
+
+
+def inference_sources(response):
+    """Exact response paths used by CPU, Metal, preview and signed-byte export."""
+    get(response)  # Includes model JSON SHA and full pinned identity validation.
+    here = Path(__file__).resolve().parent
+    common = {
+        'measured_response.py': ('is_measured', 'require', 'get', '_cached'),
+        'paired_coordinates.py': None,
+        '../scripts/residual_grid.py': ('SHAPE', 'NODES', 'stencil', 'coefficients', 'pack', 'unpack'),
+        'gpu_tensor.py': ('TensorTools.__init__', 'TensorTools.tensor', 'stencil_tensor'),
+    }
+    if response.get('preset', '').startswith('r5-paired-'):
+        common.update({
+            'paired_response.py': ('_DETAIL_INDICES', '_EXPERT_DIRECTIONS', '_c1_basis', '_c1_basis_tensor',
+                'PairedModel.__init__', 'PairedModel.coordinates', 'PairedModel.stencil',
+                'PairedModel.response', 'PairedModel.coordinates_tensor', 'PairedModel.response_tensor',
+                'PairedModel.predict', 'PairedModel.predict_cpu'),
+            'gpu_color.py': ('paired_tensor', 'paired_numpy'),
+        })
+    else:
+        common['measured_response.py'] = ('Model.__init__', 'Model.coordinates', 'Model.forward', 'Model.stencil', 'Model.predict')
+    return {name: _inference_ast(here / name, names) for name, names in sorted(common.items())}
+
+
+def runtime_fingerprint(response):
+    manifest = dict(schema='r5-grid-response-inference/1', response=response,
+                    sources=inference_sources(response))
+    return hashlib.sha256(json.dumps(manifest, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+
+
+def verify_saved_runtime(identity):
+    """Check new double bindings, or a narrowly certified old implementation.
+
+    Never edits historical result identities or silently selects today's model.
+    The legacy branch is scoped to known source hashes AND current inference.
+    """
+    response = identity['response']
+    current_registry = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+    current_sources = inference_sources(response)
+    recorded_runtime = identity.get('response_runtime_sha256')
+    if recorded_runtime is not None:
+        if (identity.get('response_implementation_sha256') != current_registry or
+                recorded_runtime != runtime_fingerprint(response)):
+            raise ValueError('实测响应推理实现已变化，请重新训练压缩网格')
+        return
+    known = _LEGACY_RESPONSE_IMPLEMENTATIONS.get(response.get('preset'), frozenset())
+    inference_digest = hashlib.sha256(json.dumps(current_sources, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
+    if (identity.get('response_implementation_sha256') not in known or
+            inference_digest != _LEGACY_VERIFIED_INFERENCE_SHA256):
+        raise ValueError('历史实测响应未通过已知实现与推理等价核验，请重新训练压缩网格')
 
 class Model:
     def __init__(self, value, digest):

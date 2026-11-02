@@ -14,6 +14,7 @@ from optimizer_policy import pc_options, search_options, adaptive_importance, sm
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]/"scripts"))
 from edit_parameter_context import ParameterContext,RuntimeColor,np,quantize_matrix_coefficients
 ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT/'vendor/fit_eval_python312'))
 from scipy.optimize import least_squares, minimize
 import white_balance as wb
 import tonal_sampling
@@ -241,15 +242,14 @@ def main():
    native_gray=report_metrics(center_mean(render_native(exact,current_x[gray_indices])),t[gray_indices])['rmse_8bit']
    candidates.append(dict(gray=gray['rmse_8bit'],native_gray=native_gray,color=selection,vector=v.copy(),label=candidate_label,pc=bundle,params=params,importance=current_importance.copy(),wb=wb_value.copy()))
  def regularization(v):
-  rows=native_rows(v[8:104],smooth.gamma(v)*16,ctx.axis,options['parameter_smoothing'])
+  rows=native_rows(v[8:104],smooth.gamma(v)*16,ctx.axis,options['parameter_smoothing'],cc1=v[:8],config=ctx.base.config)
   if continuity_bank is not None:
    rows=np.r_[rows,continuity_bank.rows(continuity_model.render(v)/16383,options['output_continuity'])]
   return rows*np.sqrt(len(train))
  def residual(v):
   nonlocal calls;calls+=1
   data=(smooth_loss_rows(corrected(smooth.render(v),active_pc)/16383,t[train]/16383,options["perceptual_weight"])*np.sqrt(group_weights)[:,None]).ravel()
-  c=v[8:104].reshape(6,16);reg=(np.roll(c,1,axis=1)-2*c+np.roll(c,-1,axis=1)).ravel()*.003
-  return np.r_[data,reg,(v[:8]-start[:8])*.003,regularization(v)]
+  return np.r_[data,regularization(v)]
  def make_gpu(mode='joint',fixed=None,indices=slice(None),reference=None):
   from gpu_optimizer import StageObjective
   return StageObjective(smooth,gray_model,t[train],t[gray_indices],group_weights,start,active_pc,
@@ -291,8 +291,7 @@ def main():
   def tone_residual(g):
    v=tone_seed.copy();v[104:]=g
    pred=gray_model.render(v)
-   return np.r_[((pred-t[gray_indices])@pc_stages.LUMA)/16383,
-                np.diff(g,n=2)*.0002,regularization(v)]
+   return np.r_[((pred-t[gray_indices])@pc_stages.LUMA)/16383,regularization(v)]
   tone_fit=progress.solve(least_squares,'灰阶明暗 Gamma',tone_residual,np.clip(seed[104:],lb[104:]+1e-5,ub[104:]-1e-5),
    bounds=(lb[104:],ub[104:]),max_nfev=a.evaluations,ftol=2e-5,xtol=2e-5,gtol=1e-6,diff_step=1e-4,gpu_objective=lambda:make_gpu('tone',tone_seed,slice(104,None)))
   seed[104:]=tone_fit.x;assess(seed,'native-gray-tone-gamma-only')
@@ -483,6 +482,8 @@ def main():
  else:
   result['full_chain_status']='Source-bound native integer color subchain. Unity-WB chart uses simulated ITP/SSCS inputs verified against independent Edit PT capture. Spatial processing and photograph frontend remain outside this validation.'
  result['fitting']['selection']='Fixed weighted floating RGB MSE + continuous DE00 on integer native outputs; full validation; full independent test excluded from all optimization and selection'
+ from parameter_smoothing import POLICY
+ result['fitting']['regularization_policy']=POLICY
  if continuity_bank is not None:result['fitting']['selection']+='; output-space continuity penalty on fixed target-independent probes'
  (a.output/'recipe.json').write_text(json.dumps(result,indent=2,allow_nan=False)+'\n');np.savez(a.output/'fit_state.npz',vector=fitted,start=start,test_prediction=exact_after)
  progress.update(stage='原生拟合完成',state='done')

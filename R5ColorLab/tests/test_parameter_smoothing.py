@@ -14,7 +14,10 @@ class ParameterSmoothingTests(unittest.TestCase):
  def test_periodic_hue_boundary(self):
   x=np.arange(128);y=x/x[-1]*262143;c=np.zeros((6,16));c[0,0]=1
   r=native_rows(c,y,x,100)
-  self.assertNotEqual(r[15],0);self.assertNotEqual(r[1],0)
+  rate=r[:64*18*3].reshape(64,18,3)
+  self.assertGreater(np.linalg.norm(rate[:4]),0)
+  self.assertGreater(np.linalg.norm(rate[-4:]),0)
+  self.assertAlmostEqual(float(r@r),float(np.linalg.norm(native_rows(np.roll(c,1,axis=1),y,x,100))**2),places=12)
  def test_policy_validation(self):
   self.assertEqual(search_options()['parameter_smoothing'],0)
   for value in [True,-1,101,float('nan'),'30']:

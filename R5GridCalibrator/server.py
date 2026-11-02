@@ -165,7 +165,9 @@ class Handler(BaseHTTPRequestHandler):
                 if not m.exists():raise ValueError('模型尚未完成')
                 z=io.BytesIO()
                 with zipfile.ZipFile(z,'w',zipfile.ZIP_DEFLATED) as a:
-                    a.writestr('model.json',m.read_bytes());a.write(ROOT/'model.py','model.py')
+                    a.writestr('model.json',m.read_bytes())
+                    for filename in ['model.py','quality.py','gpu_coordinates.py','perceptual.py','coordinate_warp.py','warp_training.py','structured_response.py','structured_training.py','hue_experts.py','hue24_experts.py','hue_training.py','stock_reference.py','requirements.txt','requirements-gpu.txt','data/r5-stock-02a40004.raw.bin','data/r5-stock-02a40004.json']:
+                        a.write(ROOT/filename,filename)
                     a.writestr('使用说明.txt','此模型为独立反推工具导出，尚未自动接入R5ColorLab。Python调用：model.predict(rgb_Nx3_0to1, grid_405x3, json.load(model.json))。需numpy/scipy。网格三通道排列遵守BIN原顺序。含训练来源和留出误差；不能声称唯一恢复ISP或跨外观/ISO/WB通用。\n')
                 return self.send(z.getvalue(),mime='application/zip',filename='R5-grid-response.zip')
             static={'/':'index.html','/app.js':'app.js','/style.css':'style.css'}

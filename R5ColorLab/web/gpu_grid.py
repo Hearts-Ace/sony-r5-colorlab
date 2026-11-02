@@ -20,13 +20,14 @@ def fit(base, target, mass, strength, *, gate=None, response=None, shape=(5, 9, 
     weights = tools.tensor(np.asarray(mass) / np.sum(mass))
     n = int(np.prod(shape))
     paired = isinstance(response, dict)
+    if paired and tuple(shape)!=(5,9,9):
+        raise ValueError('R5 paired response requires the native 5x9x9 grid')
     if paired:
         from measured_response import get
         model = get(response)
         if not hasattr(model, 'affine'):
             raise ValueError('Metal grid solve supports R5 paired response snapshots')
-        affine = tools.tensor(model.affine)
-        coordinates = x @ affine[:, :3].T + affine[:, 3]
+        coordinates = model.coordinates_tensor(tools, x)
         mixing = tools.tensor(model.response(np.asarray(base)) * 256)
     else:
         coordinates = provisional_coordinates(tools, x)
@@ -35,6 +36,13 @@ def fit(base, target, mass, strength, *, gate=None, response=None, shape=(5, 9, 
     gates = tools.tensor(np.ones(len(x)) if gate is None else gate)
     neighbors = tools.tensor(edges(tuple(shape)), True)
     penalty = strength / n
+    actual_gram = None
+    actual_bound = 0.
+    if paired:
+        from grid_regularization import get_penalty
+        regularizer=get_penalty(response)
+        actual_gram=tools.tensor(regularizer.dense_gram * 256**2)
+        actual_bound=regularizer.max_row_sum_upper * 256**2 * strength
     ridge = 0 if paired else 1e-10
 
     def predict(v):
@@ -44,7 +52,8 @@ def fit(base, target, mass, strength, *, gate=None, response=None, shape=(5, 9, 
 
     def objective(v):
         error = ((predict(v) - desired).square().sum(dim=1) * weights).sum()
-        neighbor = (v[neighbors[:, 0]] - v[neighbors[:, 1]]).square().sum() * penalty
+        neighbor = ((v.ravel() @ actual_gram @ v.ravel()) * strength if paired else
+            (v[neighbors[:, 0]] - v[neighbors[:, 1]]).square().sum() * penalty)
         return error + neighbor + v.square().sum() * ridge
 
     # Gershgorin upper bound for the fixed interpolation normal operator.
@@ -52,7 +61,7 @@ def fit(base, target, mass, strength, *, gate=None, response=None, shape=(5, 9, 
     node_mass.index_add_(0, indices.ravel(),
         (interpolation * (weights * gates.square())[:, None]).ravel())
     response_bound = mixing.abs().sum(dim=1).amax() * mixing.abs().sum(dim=2).amax()
-    lipschitz = float((2 * (node_mass.max() * response_bound + 12 * penalty + ridge)).cpu())
+    lipschitz = float((2 * (node_mass.max() * response_bound + (actual_bound if paired else 12 * penalty) + ridge)).cpu())
     step = 1 / max(lipschitz, 1e-10)
     current = torch.zeros((n, 3), device='mps')
     extrapolated = current.clone()
@@ -93,4 +102,5 @@ def fit(base, target, mass, strength, *, gate=None, response=None, shape=(5, 9, 
     return result, dict(backend='Apple Metal/MPS', solver='bounded FISTA; resident grid interpolation',
         iterations=iteration + 1, converged=converged, before=before, after=best_loss,
         seconds=time.perf_counter() - started, training_only=True, regularization=strength,
-        shape=list(shape), clipping_in_objective=paired)
+        shape=list(shape), clipping_in_objective=paired,
+        regularization_policy=(regularizer.metadata if paired else 'teacher-neighbor-rgb-residual'))

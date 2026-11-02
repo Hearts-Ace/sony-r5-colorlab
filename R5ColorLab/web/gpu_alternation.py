@@ -26,6 +26,7 @@ class BlockObjective:
         self.native_start = tensor(native_start)
         self.perceptual_weight = perceptual_weight
         self.smoothing = parameter_smoothing / 100
+        self.smoothing_config = smooth.ctx.base.config
         self.target_lab = self.gpu.lab(self.target).detach()
         self.curve = None
         if pc_bundle is not None:
@@ -88,20 +89,14 @@ class BlockObjective:
         if self.perceptual_weight:
             rows = rows + ((self.gpu.lab(predicted) - self.target_lab) / 100).square().sum(dim=1) * self.perceptual_weight
         loss = (rows * self.weights).mean()
-        coefficients = vector[8:104].reshape(6, 16)
-        hue = torch.roll(coefficients, 1, 1) - 2 * coefficients + torch.roll(coefficients, -1, 1)
-        loss = loss + (hue.square().sum() + (vector[:8] - self.native_start[:8]).square().sum()) * .003**2 / len(rows)
         return loss + self.smoothing_loss(vector)
 
     def smoothing_loss(self, vector):
         torch = self.torch
-        coefficients = vector[8:104].reshape(6, 16)
-        hue = torch.roll(coefficients, 1, 1) - 2 * coefficients + torch.roll(coefficients, -1, 1)
-        axis = self.gpu.axis / self.gpu.axis[-1]
-        dx = torch.diff(axis)
-        gamma = self.gpu.gamma(vector) * 16 / 262143
-        curvature = torch.diff(torch.diff(gamma) / dx) * (dx[:-1] + dx[1:]) / 2
-        loss = (hue.square().mean() * .02**2 + curvature.square().mean() * 16**2) * self.smoothing
+        from parameter_smoothing import native_rows_tensor
+        rows = native_rows_tensor(self.gpu, vector[8:104], self.gpu.gamma(vector)*16,
+            self.gpu.axis, self.smoothing*100, cc1=vector[:8], config=self.smoothing_config)
+        loss = rows.square().sum()
         if self.continuity is not None:
             loss = loss + self.continuity.loss(self.continuity_gpu.render(vector) / 16383)
         return loss

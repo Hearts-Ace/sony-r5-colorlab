@@ -1,11 +1,11 @@
-const measuredGridResponse={"schema": "r5-measured-grid-response/1", "preset": "r5-paired-20261024-v2", "sha256": "8879499fbd9b24899dcbd8fee4135b806fdcba1fd18a677b090b7af212b85a45", "model": "ILCE-7RM5"};
+const measuredGridResponse={"schema": "r5-measured-grid-response/1", "preset": "r5-paired-20261102-three-experts", "sha256": "3cecec3387acbd72524be42db34586237df0c2c7d458d4090467375d28fa0815", "model": "ILCE-7RM5"};
 function selectedGridResponse(){
   if($('gridResponseModel').value==='measured')return measuredGridResponse;
   const value=JSON.parse($('legacyGridResponse').value);
   if(!Array.isArray(value)||value.length!==3||value.some(row=>!Array.isArray(row)||row.length!==3||row.some(v=>typeof v!=='number'||!Number.isFinite(v))))throw Error('旧版响应矩阵需为 3×3 有限数字 JSON');
   return value;
 }
-function gridResponseName(response){return Array.isArray(response)?'旧版 5×9×9 · BT.601 + 固定响应':(response?.preset==='r5-paired-20261024-v2'?'R5 实拍响应 v2 · 2026-10-24':'历史实测代理');}
+function gridResponseName(response){return Array.isArray(response)?'旧版 5×9×9 · BT.601 + 固定响应':({'r5-paired-20261102-three-experts':'R5 共享 C1＋三色相专家 · 2026-11-02','r5-paired-20261102-nonlinear':'历史 R5 非线性坐标＋二阶响应 · 2026-11-02','r5-paired-20261024-v2':'历史 R5 实拍响应 v2 · 2026-10-24','r5-paired-20261024':'历史 R5 实拍响应 v1 · 2026-10-24'}[response?.preset]||'历史实测代理');}
 function gridResponseControls(){ $('legacyGridResponseFields').hidden=$('gridResponseModel').value!=='legacy'; }
 
 'use strict';

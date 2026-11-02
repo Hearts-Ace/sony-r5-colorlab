@@ -31,10 +31,9 @@ class GPUStageTests(GPUAlternationTests):
         vector=self.vector.copy();vector[block]=values
         gray=self.gray.render(vector);predicted=self.smooth.render(vector)
         regularization=native_rows(vector[8:104],self.smooth.gamma(vector)*16,
-            self.context.axis,30)*np.sqrt(len(self.weights))
+            self.context.axis,30,cc1=vector[:8],config=self.context.base.config)*np.sqrt(len(self.weights))
         if mode=='tone':
-            data=[((gray-self.gray_target)@pc_stages.LUMA)/16383,
-                np.diff(vector[104:],n=2)*.0002]
+            data=[((gray-self.gray_target)@pc_stages.LUMA)/16383]
         elif mode=='gray':
             data=[(gray-self.gray_target).ravel()/16383,(vector[:104]-self.start[:104])*.0001,
                 (predicted-self.reference).ravel()/16383*.5]

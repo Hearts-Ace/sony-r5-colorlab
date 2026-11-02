@@ -100,7 +100,7 @@ def refine_grid(grid, base, target, gate, weights, sweeps=1, perceptual_weight=0
         model=get(response);_,ids,w=model.stencil(base)
         result=np.asarray(grid,dtype=int).copy();weights=np.asarray(weights)/np.sum(weights)
         predicted=model.predict(base,result);costs=display_cost_rows(predicted,target,perceptual_weight)
-        penalty=lambda table:grid_cost(table,parameter_smoothing)
+        penalty=lambda table:grid_cost(table,parameter_smoothing,response=response)
         before=float(costs@weights)+penalty(result);accepted=0
         for sweep in range(sweeps):
             changed=False
@@ -132,7 +132,7 @@ def refine_grid(grid, base, target, gate, weights, sweeps=1, perceptual_weight=0
     costs=display_cost_rows(raw,target,perceptual_weight)
     weights=np.asarray(weights)/np.sum(weights)
     from parameter_smoothing import grid_cost
-    penalty=lambda g:grid_cost(g,parameter_smoothing)
+    penalty=lambda g:grid_cost(g,parameter_smoothing,response=response)
     before=float(costs@weights)+penalty(result);accepted=0
     for sweep in range(sweeps):
         changed=False

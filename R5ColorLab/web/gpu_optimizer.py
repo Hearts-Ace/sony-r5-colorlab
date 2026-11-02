@@ -28,7 +28,6 @@ class StageObjective(BlockObjective):
         gray_delta = self.gray_gpu.render(full) / 16383 - self.gray_target
         if self.mode == 'tone':
             loss = (gray_delta @ self.luma).square().sum()
-            loss = loss + torch.diff(full[104:], n=2).square().sum() * .0002**2
         elif self.mode == 'gray':
             predicted = self.gpu.render(full) / 16383
             loss = gray_delta.square().sum()

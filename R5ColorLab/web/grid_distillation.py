@@ -47,7 +47,7 @@ def compress(base, weights, teacher, response, probe_side=33, sweeps=1, progress
             from continuity_grid import constrain
             grid,continuity_audit=constrain(grid,inputs,desired,mass,response,parameter_smoothing,continuity,progress)
         predicted = evaluate(inputs, grid, response)
-        score = float(display_cost_rows(predicted, desired, .35)@mass)+grid_cost(grid,parameter_smoothing)
+        score = float(display_cost_rows(predicted, desired, .35)@mass)+grid_cost(grid,parameter_smoothing,response=response)
         if continuity is not None:
             from continuity_grid import penalty
             score+=penalty(grid,response,continuity)
@@ -95,7 +95,7 @@ def fit_target(base, target, weights, response, progress=None, parameter_smoothi
         # Score exactly the signed-7-bit coefficients that will be exported.
         grid = unpack(pack(grid))
         prediction = evaluate(base, grid, response)
-        score = float(display_cost_rows(prediction, target, .35)@mass)+grid_cost(grid, parameter_smoothing)
+        score = float(display_cost_rows(prediction, target, .35)@mass)+grid_cost(grid, parameter_smoothing,response=response)
         if continuity is not None:
             from continuity_grid import penalty
             score+=penalty(grid,response,continuity)
@@ -107,7 +107,7 @@ def fit_target(base, target, weights, response, progress=None, parameter_smoothi
         train_probe_mass=[1.0, 0.0], selected_smoothness=best[2]['smoothness'],
         candidates=[value[2] for value in candidates], training_only=True,
         parameter_smoothing=parameter_smoothing, teacher=None,
-        selection='training target loss plus unchanged grid smoothness; no validation or test fitting',
+        selection='training target loss plus actual-response path slope/curvature; no validation or test fitting',
         limit_fraction=float(np.mean((grid == -64) | (grid == 63))))
 
 
@@ -182,6 +182,9 @@ def generate(job, response, progress=None, post_gray_refinement=False, objective
                     target_source=core.target_identity(job), pairs_sha256=value['pairs_sha256'],
                     implementation_sha256=core.sha(Path(__file__).read_bytes()), response=response_json(response),
                     response_implementation_sha256=core.sha(Path(__file__).with_name('measured_response.py').read_bytes()) if isinstance(response,dict) else None)
+    if isinstance(response,dict):
+        from measured_response import runtime_fingerprint
+        identity['response_runtime_sha256']=runtime_fingerprint(identity['response'])
     identity['post_gray_refinement']=post_gray_refinement
     if objective != 'pc-teacher': identity['objective'] = objective
     key = core.sha(json.dumps(identity, sort_keys=True).encode())
@@ -234,8 +237,9 @@ def load_result(job, key):
             raise ValueError('压缩参数与当前任务来源不一致，请重新压缩训练')
     if core.sha(json.dumps(identity,sort_keys=True).encode())!=key or value['camera_apply_allowed'] is not False:
         raise ValueError('Compression identity mismatch')
-    if isinstance(identity['response'],dict) and identity.get('response_implementation_sha256')!=core.sha(Path(__file__).with_name('measured_response.py').read_bytes()):
-        raise ValueError('实测响应实现已变化，请重新训练压缩网格')
+    if isinstance(identity['response'],dict):
+        from measured_response import verify_saved_runtime
+        verify_saved_runtime(identity)
     grid=unpack(bytes.fromhex(value['payload_hex']))
     response_matrix(identity['response'])
     return value,grid,core.sha(path.read_bytes())
