@@ -1,3 +1,4 @@
+from legacy_fit_fixture import legacy_fit
 import copy
 import sys
 import unittest
@@ -23,7 +24,7 @@ class StructuredTrainingTests(unittest.TestCase):
         np.testing.assert_array_equal(model.predict(x,np.zeros_like(g),new),x)
 
     def test_test_probe_colors_targets_and_grid_cannot_affect_training(self):
-        pairs,_=FitTests().pairs();initial=model.fit(pairs,refine=False,options=dict(response_degree=2,perceptual_mix=1))
+        pairs,_=FitTests().pairs();initial=legacy_fit(pairs,refine=False,options=dict(response_degree=2,perceptual_mix=1))
         seen=[]
         def fake(x,y,d,weights,init,**kwargs):
             seen.append([v.copy() for v in [x,y,d,weights,init,kwargs['path_constraints']['first'],kwargs['path_constraints']['second']]])
@@ -46,7 +47,7 @@ class StructuredTrainingTests(unittest.TestCase):
         self.assertEqual(model.optimization_options(dict(curvature_scale=.75))['curvature_scale'],.75)
 
     def test_curvature_candidates_preserve_fallback_and_frozen_coordinates(self):
-        pairs,_=FitTests().pairs();initial=model.fit(pairs,refine=False,options=dict(response_degree=2,perceptual_mix=1))
+        pairs,_=FitTests().pairs();initial=legacy_fit(pairs,refine=False,options=dict(response_degree=2,perceptual_mix=1))
         captured=[];seen=[]
         def poor_candidate(x,y,d,weights,init,**kwargs):
             seen.append(kwargs['curvature_scale'])

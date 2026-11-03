@@ -1,3 +1,4 @@
+from legacy_fit_fixture import legacy_fit
 import sys,unittest,copy
 from pathlib import Path
 import numpy as np
@@ -30,7 +31,7 @@ class WarpTests(unittest.TestCase):
   from unittest.mock import patch
   from test_calibrator import FitTests
   from warp_training import refine
-  pairs,_=FitTests().pairs();initial=model.fit(pairs,refine=False,options=dict(response_degree=2,perceptual_mix=1))
+  pairs,_=FitTests().pairs();initial=legacy_fit(pairs,refine=False,options=dict(response_degree=2,perceptual_mix=1))
   coef=np.asarray(initial['response_weights']);expanded=np.zeros((30,3));expanded[:len(coef)]=coef;initial['response_weights']=expanded.tolist();initial['response_basis']='rgb-quadratic';initial['smooth']=True;initial['report']['optimization']['options']['coordinate_device']='mps'
   def fake(x,y,ids,grids,coef,affine,raw,weights,*args):
    c=np.zeros((3,3,3,3));return c,c,dict(device='test-double',autograd=False,closure_calls=0,certificate=w.certificate(c,affine))

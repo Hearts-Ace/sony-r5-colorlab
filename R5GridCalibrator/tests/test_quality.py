@@ -1,3 +1,4 @@
+from legacy_fit_fixture import legacy_fit
 import copy,sys,unittest
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
@@ -19,15 +20,15 @@ class QualityTests(unittest.TestCase):
             if p['role']=='train':
                 ix=np.flatnonzero(p['buckets']<7)[::9]
                 p['y'][ix]=np.clip(p['y'][ix]+[.2,-.15,.12],0,1)
-        robust=model.fit(damaged,refine=False)
-        plain=model.fit(damaged,refine=False,options=dict(robust_scale=0))
+        robust=legacy_fit(damaged,refine=False)
+        plain=legacy_fit(damaged,refine=False,options=dict(robust_scale=0))
         self.assertLess(robust['report']['test']['rmse'],plain['report']['test']['rmse']*.6)
         self.assertIn('grouped_test',robust['report']);self.assertIn('neutral',robust['report']['grouped_test'])
     def test_adaptive_fit_ignores_test_colors_and_reports_feature_rank(self):
         pairs,_=fixtures.FitTests().pairs();opts=dict(starts=1,alternations=2,max_nfev=10,samples_per_pair=40)
-        a=model.fit(pairs,options=opts);p=copy.deepcopy(pairs)
+        a=legacy_fit(pairs,options=opts);p=copy.deepcopy(pairs)
         p[-1]['x']=np.ones_like(p[-1]['x'])*.1;p[-1]['y']=np.ones_like(p[-1]['y'])*.9
-        b=model.fit(p,options=opts)
+        b=legacy_fit(p,options=opts)
         np.testing.assert_array_equal(a['response_weights'],b['response_weights'])
         np.testing.assert_array_equal(a['coordinate_affine'],b['coordinate_affine'])
         runs=a['report']['optimization']['runs']

@@ -1,3 +1,4 @@
+from legacy_fit_fixture import legacy_fit, LEGACY_OPTIONS
 import base64,copy,hashlib,io,json,sys,tempfile,threading,time,unittest,urllib.request,urllib.error,zipfile
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
@@ -47,26 +48,26 @@ class FitTests(unittest.TestCase):
             pairs.append(dict(x=x,y=y,grid=g,role='test' if i==11 else 'train',buckets=np.arange(len(x))%10))
         return pairs,truth
     def test_known_response_recovery_and_heldout_isolation(self):
-        pairs,truth=self.pairs();fit=model.fit(pairs,refine=False)
+        pairs,truth=self.pairs();fit=legacy_fit(pairs,refine=False)
         self.assertLess(fit['report']['test']['rmse'],.03)
         self.assertEqual(fit['report']['excitation_rank'],3)
         self.assertLess(fit['report']['test']['rmse'],fit['report']['legacy_identity_test']['rmse']*.01)
         changed=copy.deepcopy(pairs);changed[-1]['y']=np.zeros_like(changed[-1]['y'])
-        poisoned=model.fit(changed,refine=False)
+        poisoned=legacy_fit(changed,refine=False)
         np.testing.assert_array_equal(fit['response_weights'],poisoned['response_weights'])
         np.testing.assert_array_equal(fit['coordinate_affine'],poisoned['coordinate_affine'])
         self.assertGreater(poisoned['report']['test']['rmse'],50)
         np.testing.assert_array_equal(model.predict(pairs[0]['x'],np.zeros((405,3)),fit),pairs[0]['x'])
     def test_low_rank_and_absent_effect_are_reported(self):
         pairs,_=self.pairs();p=copy.deepcopy(pairs[:1]);p[0]['y']=p[0]['x'].copy()
-        result=model.fit(p,refine=True)
+        result=legacy_fit(p,refine=True)
         self.assertEqual(result['report']['excitation_rank'],1)
         self.assertGreaterEqual(len(result['report']['warnings']),3)
         self.assertIn('不可辨识',result['report']['coordinate_note'])
     def test_coordinate_refinement_runs_and_never_trains_on_test(self):
-        pairs,_=self.pairs();options=dict(starts=2,alternations=2,max_nfev=10,samples_per_pair=80);result=model.fit(pairs,refine=True,options=options)
+        pairs,_=self.pairs();options=dict(starts=2,alternations=2,max_nfev=10,samples_per_pair=80);result=legacy_fit(pairs,refine=True,options=options)
         changed=copy.deepcopy(pairs);changed[-1]['y']=np.zeros_like(changed[-1]['y'])
-        other=model.fit(changed,refine=True,options=options)
+        other=legacy_fit(changed,refine=True,options=options)
         np.testing.assert_array_equal(result['coordinate_affine'],other['coordinate_affine'])
         self.assertEqual(len(result['report']['candidates']),10)
         runs=result['report']['optimization']['runs']
@@ -134,7 +135,7 @@ class HTTPTests(unittest.TestCase):
                 with self.assertRaises(urllib.error.HTTPError):req('/api/photo',dict(capture_id=cap['id'],number=2,image=encoded(before)))
                 drift=req('/api/photo',dict(capture_id=cap['id'],number=1,image=encoded(before)));self.assertEqual(drift['drift']['rmse'],0)
                 self.assertEqual(len(req('/api/captures')[0]['uploaded']),7)
-                jid=req('/api/fit',dict(pairs=pairids,refine=False))['id']
+                jid=req('/api/fit',dict(pairs=pairids,refine=False,options=LEGACY_OPTIONS))['id']
                 for _ in range(100):
                     state=req('/api/status/'+jid)
                     if state['state']!='running':break

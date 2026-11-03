@@ -1,11 +1,11 @@
-const measuredGridResponse={"schema": "r5-measured-grid-response/1", "preset": "r5-paired-20261102-three-experts", "sha256": "3cecec3387acbd72524be42db34586237df0c2c7d458d4090467375d28fa0815", "model": "ILCE-7RM5"};
+let measuredGridResponse={"schema": "r5-measured-grid-response/1", "preset": "r5-paired-20261102-shared-c1-c50", "sha256": "e794ece2fe8f4114eb241e376918bffbc4c182e9fadf0f6fa21d99fdd7a1b552", "model": "ILCE-7RM5"};
 function selectedGridResponse(){
   if($('gridResponseModel').value==='measured')return measuredGridResponse;
   const value=JSON.parse($('legacyGridResponse').value);
   if(!Array.isArray(value)||value.length!==3||value.some(row=>!Array.isArray(row)||row.length!==3||row.some(v=>typeof v!=='number'||!Number.isFinite(v))))throw Error('旧版响应矩阵需为 3×3 有限数字 JSON');
   return value;
 }
-function gridResponseName(response){return Array.isArray(response)?'旧版 5×9×9 · BT.601 + 固定响应':({'r5-paired-20261102-three-experts':'R5 共享 C1＋三色相专家 · 2026-11-02','r5-paired-20261102-nonlinear':'历史 R5 非线性坐标＋二阶响应 · 2026-11-02','r5-paired-20261024-v2':'历史 R5 实拍响应 v2 · 2026-10-24','r5-paired-20261024':'历史 R5 实拍响应 v1 · 2026-10-24'}[response?.preset]||'历史实测代理');}
+function gridResponseName(response){return Array.isArray(response)?'旧版 5×9×9 · BT.601 + 固定响应':({'r5-paired-20261102-shared-c1-c50':'R5 无专家共享 C1 · 曲率50%','r5-paired-20261102-three-experts':'R5 共享 C1＋三色相专家 · 2026-11-02','r5-paired-20261102-nonlinear':'历史 R5 非线性坐标＋二阶响应 · 2026-11-02','r5-paired-20261024-v2':'历史 R5 实拍响应 v2 · 2026-10-24','r5-paired-20261024':'历史 R5 实拍响应 v1 · 2026-10-24'}[response?.preset]||'历史实测代理');}
 function gridResponseControls(){ $('legacyGridResponseFields').hidden=$('gridResponseModel').value!=='legacy'; }
 
 'use strict';
@@ -376,6 +376,7 @@ async function initTrainedFilters(){
 
 async function init(){
   try{boot=await(await api('/api/bootstrap')).json();
+    measuredGridResponse=boot.grid_response;
     $('computeBackend').textContent=boot.compute_backend?.available?'Apple Metal GPU：浮点拟合、Gamma／色彩交替、整数颜色渲染、网格求解／压缩和批量色差。保留一次有上限的 CPU 浮点校正及阶段验收。':'CPU 8线程：当前服务未启用 Metal 训练；已运行任务保持原计算方式。';
     names.forEach((name,i)=>{const b=document.createElement('button');b.textContent=String(i+1);b.title='自定义配置 '+(i+1);b.dataset.number=i+1;b.onclick=()=>selectLook(i+1);$('looks').append(b);});
     for(const preset of boot.stock_grids){const o=document.createElement('option');o.value=preset.id;o.textContent=preset.label;o.title=JSON.stringify(preset.provenance);$('stockGrid').append(o);}

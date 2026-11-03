@@ -22,6 +22,6 @@ class QuadraticTests(unittest.TestCase):
   np.testing.assert_array_equal(model.predict(x,np.zeros((405,3)),m),x)
   np.testing.assert_allclose(model.predict(x,g,m),np.clip(x+model.features(x,model.delta(x,g,affine),'quadratic')@coef,0,1))
  def test_options(self):
-  self.assertEqual(model.optimization_options()['response_degree'],1)
+  self.assertEqual(model.optimization_options()['response_degree'],2)
   for degree in [0,3,True,'2']:
    with self.assertRaises(ValueError):model.optimization_options(dict(response_degree=degree))

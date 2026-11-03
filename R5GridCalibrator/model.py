@@ -48,7 +48,7 @@ def metric(pred,target):
 
 
 def optimization_options(value=None):
-    defaults=dict(max_nfev=150,starts=4,alternations=3,samples_per_pair=480,robust_scale=3,color_balance=True,adaptive=True,coordinate_device="cpu",response_degree=1,hue24_balance=False,perceptual_mix=0,nonlinear_coordinates=False,structured_response=False,curvature_scale=1.,hue_experts=False,hue_expert_count=3)
+    defaults=dict(max_nfev=200,starts=4,alternations=3,samples_per_pair=1000,robust_scale=3,color_balance=True,adaptive=True,coordinate_device="mps",response_degree=2,hue24_balance=True,perceptual_mix=1,nonlinear_coordinates=True,structured_response=True,curvature_scale=.5,hue_experts=False,hue_expert_count=3)
     if value is not None:
         if type(value) is not dict or set(value)-set(defaults):raise ValueError('未知优化选项')
         defaults.update(value)

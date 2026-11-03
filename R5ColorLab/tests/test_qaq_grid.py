@@ -32,7 +32,8 @@ class QAQGridTests(unittest.TestCase):
     def test_options_and_ui(self):
         policy=pc_options(dict(curve_mode='qaq-grid'))
         from measured_response import default_response
-        self.assertEqual(policy['response'],default_response())
+        from grid_models import default_response as task_response
+        self.assertEqual(policy['response'],task_response())
         for value in [dict(curve_mode='qaq-grid',grid_enabled=False),dict(response=np.zeros((3,3)).tolist()),dict(response=[[1]])]:
             with self.assertRaises(ValueError):pc_options(value)
         html=(core.HERE/'static/index.html').read_text()

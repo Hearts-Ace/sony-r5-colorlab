@@ -1,3 +1,4 @@
+from legacy_fit_fixture import legacy_fit
 import copy
 import importlib
 import sys
@@ -16,7 +17,7 @@ CASES = (('hue_experts',3,(3,81,3),243,5),
 
 def fixture():
     pairs,_=FitTests().pairs()
-    m=model.fit(pairs,refine=False,options=dict(response_degree=2,perceptual_mix=1))
+    m=legacy_fit(pairs,refine=False,options=dict(response_degree=2,perceptual_mix=1))
     q=np.zeros((30,3));old=np.asarray(m['response_weights']);q[:len(old)]=old
     m.update(response_basis=sr.KIND_C1,response_weights=sr.from_quadratic(q,sr.KIND_C1).tolist(),smooth=True)
     m['report']['structured_response']=dict(scope='synthetic shared fixture')
@@ -104,7 +105,7 @@ class HueTrainingTests(unittest.TestCase):
     def test_expert_option_validation(self):
         for value in [None,1,'yes']:
             with self.assertRaises(ValueError):model.optimization_options(dict(hue_experts=value))
-        with self.assertRaises(ValueError):model.optimization_options(dict(hue_experts=True))
+        with self.assertRaises(ValueError):model.optimization_options(dict(hue_experts=True,structured_response=False))
         self.assertTrue(model.optimization_options(dict(hue_experts=True,structured_response=True,response_degree=2))['hue_experts'])
         for value in [None,True,False,0,1,4,23,25,3.,24.,'3','24',np.int64(24)]:
             with self.assertRaises(ValueError):model.optimization_options(dict(hue_expert_count=value))
