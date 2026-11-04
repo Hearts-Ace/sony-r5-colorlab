@@ -1,4 +1,4 @@
-# R5 Color Lab · v4.5 色卡版（适配4.34固件）
+# R5 Color Lab · v4.5 色卡版（BIN v4）
 
 使用当前Python环境在本地浏览器拟合CC1、block13、Gamma和5×9×9网格。无需原研究工作区、Edit或RawAlchemy安装；不执行相机刷写。
 
@@ -10,9 +10,7 @@
 
 新结果绑定模型、注册表与实际 CPU／GPU 推理源码指纹；历史 v2 和非线性结果仅经已知源码白名单及原类逐值对照兼容，不改历史参数或 BIN。自由 PC tone-tint 教师仍是原生参数搜索的辅助模型；最终 `fuji-target` 网格直接拟合富士目标。正式训练预算、平滑30／连续性30及压缩后不交替、不做灰阶微调保持，详见 [TRAINING.md](TRAINING.md)。
 
-历史已完成的三专家 FUJ/v4.5 十二项滤镜见 [filters/FUJ_12_v45_three_experts_20261102](../filters/FUJ_12_v45_three_experts_20261102/)，BIN SHA256 为 `b985c0d1e99c33681e5994a282372bc5bf8e7ec0c0811b56e87cd3cbd66b61c8`。
-
-无专家新流程全部12项正式重训已完成，批次 `c29ff1d3ef314d718ab370cf6ed2bfb6`，本地完整BIN SHA256 为 `2e9c60c1f7858940e366aa1b0f2c0c089347445c9c286c0c938a40a35610caee`。本次更新训练代码与算子；仓库上述三专家滤镜目录保留为历史结果。
+当前十二款正式滤镜已全部完成，批次 `c29ff1d3ef314d718ab370cf6ed2bfb6`。下载 [R5NATIVE.BIN、可编辑配置与训练／数值回执](../filters/FUJ_12_v45_shared_c1_20261104/)；BIN SHA256 为 `2e9c60c1f7858940e366aa1b0f2c0c089347445c9c286c0c938a40a35610caee`。兼容4.48声音版及支持本项目BIN v4的固件。旧批次保留其独立模型身份。
 
 ## 启动
 
