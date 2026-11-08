@@ -17,7 +17,7 @@ class OutputContinuityTests(unittest.TestCase):
         np.testing.assert_array_equal(bank.rgb, ProbeBank().rgb)
         self.assertEqual(search_options()['output_continuity'], 0)
         for value in (True, -1, 101, float('nan')):
-            with self.assertRaises(ValueError): search_options(dict(output_continuity=value))
+            with self.assertRaises(ValueError): search_options(dict(output_continuity=value,postfit_deburr=False))
         self.assertEqual(bank.cost(bank.rgb, 0), 0)
         self.assertAlmostEqual(bank.mass.sum(), 1.)
         self.assertTrue(np.any(np.all(bank.rgb == 0, axis=1)))

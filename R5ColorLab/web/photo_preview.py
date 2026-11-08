@@ -254,7 +254,7 @@ def render(source, job, output, pc=False, grid_key=None, grid_enabled=True):
         raw_camera_identity=camera_identity,decoder_matrix_matches_reference=decoder_matrix_matches_reference,
         pc_compensation_sha256=pc_sha,
         grid_response=response_identity(job,pc,grid_key),
-        lut_decoder='installed RawAlchemy LibRaw; linear bilinear demosaic, unit WB, no auto scale',
+        lut_decoder='installed rawpy LibRaw; linear bilinear demosaic, unit WB, no auto scale',
         lut_color='RawAlchemy v0.6.2 fused reference -> S-Log3 -> tetrahedral LUT',
         model_input='approximate RAW front: LibRaw camera RGB * reference green gain * as-shot WB -> native SSCS -> post-SSCS matrix input',
         model_color='selected fit recipe and source-bound measured baseline; color_only',

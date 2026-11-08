@@ -48,14 +48,28 @@ class TrainingProgress:
                 self.convergence.append(dict(stage=stage,backend='GPU fallback',error=str(error)))
                 self.update(gpu_fallback=str(error),gpu_backend=None,gradient_workers=self.gradient_workers)
             else:
+                stopping_audit = {}
+                if getattr(result, 'native_strict_stopping', False):
+                    stopping_audit = {key: result[key] for key in (
+                        'native_strict_stopping', 'stopping_policy', 'stopping_scale',
+                        'full_objective_scale', 'optimizer_ftol', 'optimizer_gtol',
+                        'optimizer_maxls', 'solver_status', 'stopping_reason',
+                        'termination_source', 'solver_projected_gradient_inf_8bit',
+                        'solver_point_equals_returned',
+                        'loss_before_raw', 'loss_after_raw', 'loss_before_8bit',
+                        'loss_after_8bit', 'gradient_inf_raw', 'gradient_inf_8bit',
+                        'projected_gradient_inf_raw', 'projected_gradient_inf_8bit',
+                        'diagnostic_point')}
                 self.convergence.append(dict(stage=stage,evaluations=int(result.nfev),
                     evaluation_limit=kwargs.get('max_nfev'),status=int(result.status),
-                    converged=bool(result.success),budget_exhausted=bool(result.status==0),
+                    converged=bool(result.success),budget_exhausted=(bool(result.budget_exhausted)
+                        if stopping_audit else bool(result.status==0)),
                     cost=float(result.cost),optimality=float(result.optimality),message=str(result.message),
                     backend=result.backend,cpu_objective_accepted=result.cpu_objective_accepted,
                     cpu_objective_before=result.cpu_objective_before,cpu_objective_after=result.cpu_objective_after,
-                    seconds=result.seconds))
-                self.update(evaluations=int(result.nfev),state='round_done',gpu_backend=None)
+                    seconds=result.seconds, **stopping_audit))
+                self.update(evaluations=int(result.nfev),state='round_done',gpu_backend=None,
+                    **stopping_audit)
                 return result
         def callback(intermediate_result):
             self.update(iteration=self.value['iteration']+1,

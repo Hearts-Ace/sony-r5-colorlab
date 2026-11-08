@@ -21,7 +21,7 @@ class ParameterSmoothingTests(unittest.TestCase):
  def test_policy_validation(self):
   self.assertEqual(search_options()['parameter_smoothing'],0)
   for value in [True,-1,101,float('nan'),'30']:
-   with self.assertRaises(ValueError):search_options({'parameter_smoothing':value})
+   with self.assertRaises(ValueError):search_options({'parameter_smoothing':value,'postfit_deburr':False})
  def test_quantized_grid_search_keeps_regularized_objective(self):
   rng=np.random.default_rng(22);base=rng.uniform(.1,.9,(80,3));grid=rng.integers(-3,4,(405,3),dtype=np.int8)
   updated,audit=refine_grid(grid,base,base,np.ones(len(base)),np.ones(len(base)),sweeps=1,parameter_smoothing=80)

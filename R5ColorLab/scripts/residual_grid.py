@@ -166,5 +166,10 @@ def collision_bound(base, target, bits=14):
 
 
 def response_json(value):
-    result=response_matrix(value)
-    return result if isinstance(result,dict) else result.tolist()
+    if not isinstance(value,dict):
+        raise ValueError('当前工作台只接受固定 R5 Hybrid 响应')
+    from measured_response import require, hybrid_response
+    result=require(value)
+    if result != hybrid_response():
+        raise ValueError('当前工作台只接受固定 R5 Hybrid 响应')
+    return result

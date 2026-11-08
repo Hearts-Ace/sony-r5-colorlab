@@ -1,0 +1,14 @@
+test_active_hue_direction30_penalty_and_gradient (test_stack_objective.StackTests.test_active_hue_direction30_penalty_and_gradient) ... ok
+test_derivative_cpu_gpu_and_target_zero (test_stack_objective.StackTests.test_derivative_cpu_gpu_and_target_zero) ... ok
+test_equal_and_gray_colors_have_finite_gradients (test_stack_objective.StackTests.test_equal_and_gray_colors_have_finite_gradients) ... ok
+test_exact_acceptance_rejects_color_regression (test_stack_objective.StackTests.test_exact_acceptance_rejects_color_regression) ... ok
+test_grid_full_objective_and_gradient_match_cpu (test_stack_objective.StackTests.test_grid_full_objective_and_gradient_match_cpu) ... ok
+test_native_update_freezes_gamma_and_accepts_actual_integers (test_stack_objective.StackTests.test_native_update_freezes_gamma_and_accepts_actual_integers) ... ok
+test_short_fit_and_rounding_preserve_packed_bounds (test_stack_objective.StackTests.test_short_fit_and_rounding_preserve_packed_bounds) ... ok
+test_squared_de00_matches_independent_numpy (test_stack_objective.StackTests.test_squared_de00_matches_independent_numpy) ... ok
+test_validation_and_test_targets_do_not_enter_objective (test_stack_objective.StackTests.test_validation_and_test_targets_do_not_enter_objective) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.720s
+
+OK

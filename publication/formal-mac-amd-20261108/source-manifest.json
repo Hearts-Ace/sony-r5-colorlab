@@ -1,0 +1,652 @@
+{
+  "schema": "mac-amd-portable-publication/1",
+  "date": "2026-11-08",
+  "source": "Mac formal 4189 and deployed AMD CPU10/concurrency3 snapshot",
+  "files": {
+    "R5ColorLab/web/anchor_dataset.py": {
+      "sha256": "88a20cf443fc9fecc3d4b2aecfb9ed5d3dd006529b92c50f1b204b80c7350b77"
+    },
+    "R5ColorLab/web/apple_gpu.py": {
+      "sha256": "34f0ce79b399f0c5e00317689f4787b4ef75b6fa4b44b0ba1ef3ae437d864df5"
+    },
+    "R5ColorLab/web/balanced_chart.py": {
+      "sha256": "0f32466caa2e89998bb3b719cdfbb6e05cc5e9543562b1b42559b0c30246b73c"
+    },
+    "R5ColorLab/web/baseline.py": {
+      "sha256": "b322c8994af6384efae5213315a1758c4a0380d0c97d3e05b7c49127de367b21"
+    },
+    "R5ColorLab/web/batch_multiround.py": {
+      "sha256": "7132eabb9128a4a7e04333df96b95bdcb790a8f0f9a749094630aaa7a1677fb0"
+    },
+    "R5ColorLab/web/batch_training.py": {
+      "sha256": "30867937a80469d9645c1358138221ac0d34cdef65a5831eeb38c6d3090fe1ab"
+    },
+    "R5ColorLab/web/build_anchor_chart.py": {
+      "sha256": "254803fe7a9c22696167769f9c0b44e8c699ddf83db2ad7fc5235403a7d54aa1"
+    },
+    "R5ColorLab/web/build_chart24.py": {
+      "sha256": "a7d71d9e44a1a3d0304850b25278194835a202fe48bc58f21849137375360b1d"
+    },
+    "R5ColorLab/web/chart_datasets.py": {
+      "sha256": "d55e5023a05660fc12ea803f9649357a96844dcc0e18806ca440a584d6f855f3"
+    },
+    "R5ColorLab/web/chart_target.py": {
+      "sha256": "df820863cf3ba2c1eb7a493dabe46df6bc98108dcc96a44f804818a24ef0c8ac"
+    },
+    "R5ColorLab/web/colorchecker24.py": {
+      "sha256": "508b0aa4d43e905aeea6eda5543373e1778ae34693271d86e3d3b162a2dfc0ea"
+    },
+    "R5ColorLab/web/compressed_alternation.py": {
+      "sha256": "36647f120626ecd567f7b8df8e847926bdecf8f84ad7452ed728b76a62275744"
+    },
+    "R5ColorLab/web/compute_backend.py": {
+      "sha256": "5a5e0c104c4f9af0843b28b73ce16bd9a37c906a974fab5a96f0d9911ca3f9e1"
+    },
+    "R5ColorLab/web/concave_gamma.py": {
+      "sha256": "a0716094b918c07373cd8037dc2d19f73f96c220dfce1927832638a8ecb58d19"
+    },
+    "R5ColorLab/web/continuity_grid.py": {
+      "sha256": "daa57c0dd36f594bb1d52d898fb6b3ff267edb20db70ba96436ee4db0de21e42"
+    },
+    "R5ColorLab/web/core.py": {
+      "sha256": "795101cc96d3d1cb9bbdc69f1bdbbaa0c8bdd4e6f2783fec86f73e3d9996b9c8"
+    },
+    "R5ColorLab/web/draft_preview.py": {
+      "sha256": "84614d1182d144eebd2688f36c13ab2d03892cc2f0d0440487e5e8cfc21f792f"
+    },
+    "R5ColorLab/web/exact_icc.py": {
+      "sha256": "6c234ed749272ba3b2d8ca15743cd6f76bc7df34bff0393337c13d39425c00f1"
+    },
+    "R5ColorLab/web/export_policy423.py": {
+      "sha256": "3abbbc2a1e1987b46f12ec7c81f4d7ad312258996a0be11475d88b21d175049f"
+    },
+    "R5ColorLab/web/file_storage.py": {
+      "sha256": "f7f26416c406ffe80fafc9868260830cbed4cebc36b0c21a86f53682e9f05148"
+    },
+    "R5ColorLab/web/fit_anchor_native.py": {
+      "sha256": "42a7996329f860f37c040f66fd8aa87f56670044763c0d426e10d575918948ce"
+    },
+    "R5ColorLab/web/formal_server.py": {
+      "sha256": "b75702092f7e728446b67c1da6ce79973926d7e3424925cb44e9a0c95b05c2de"
+    },
+    "R5ColorLab/web/gamma_color_recovery.py": {
+      "sha256": "a5f1cb1d9dfeb7b57c2419b9010a4d9252ddd73d0f10ea74d12b81009211b2cb"
+    },
+    "R5ColorLab/web/gamma_diagnostics.py": {
+      "sha256": "bd1c68f8e22c6d5bd7e3973407ff58cc0d0cc5060bb56832cf668047fcd8ea31"
+    },
+    "R5ColorLab/web/gamma_global_correction.py": {
+      "sha256": "ef8230f13cbf9a8c73214e3b0ae179a840aac1e7ad1071d53e642ee315f095f5"
+    },
+    "R5ColorLab/web/gpu_alternation.py": {
+      "sha256": "7669bc70429ccc7012ace88df6cde16f249a7150a55c7d2f3d48d148e1aa3fde"
+    },
+    "R5ColorLab/web/gpu_color.py": {
+      "sha256": "43999a7e2713759d98d444e3aa1ce6907ab61eaea74fb219070aeed7328a343c"
+    },
+    "R5ColorLab/web/gpu_grid.py": {
+      "sha256": "6da8a57612f2d983e2a900f4cd84ce0f7b1f0a82ec5ff65ca3582d2c30b57d67"
+    },
+    "R5ColorLab/web/gpu_grid_refine.py": {
+      "sha256": "6fee25d0ecc88ad2daebb2e2dfca9dae1e0103075b7bb15bd0dc49e671ebb6de"
+    },
+    "R5ColorLab/web/gpu_native.py": {
+      "sha256": "d566338e2f4f26236206925758dfd6884a9c03e1efe6f9b24374bdcd0905cc2c"
+    },
+    "R5ColorLab/web/gpu_optimizer.py": {
+      "sha256": "99011a252bc07fb03aeb8a09d164d15f2e1748f5dfd67318fb8a25d6fa894469"
+    },
+    "R5ColorLab/web/gpu_runtime.py": {
+      "sha256": "f306afbbdb2355ec8f4d668e666bee523c22e995bfd2d9997ad6e1b2e88741e8"
+    },
+    "R5ColorLab/web/gpu_tensor.py": {
+      "sha256": "2e93f88cb757ffec59f7ef6c30552a510afd4c2bf4d77c45ffcd0fb4bb8cd9e2"
+    },
+    "R5ColorLab/web/grid_distillation.py": {
+      "sha256": "a189dee9021fa733c23aa1fc549382e58957b7930f32c74578fc44d5a0f20082"
+    },
+    "R5ColorLab/web/grid_models.py": {
+      "sha256": "e811967970b0375a13fc38c72a2693314999e9db2f0fedfcd44d55dbe9bfb8e0"
+    },
+    "R5ColorLab/web/grid_regularization.py": {
+      "sha256": "a97700eb8cb19e8f71edf6b460d2d0b1ba8ea650949e79a067111639081e639a"
+    },
+    "R5ColorLab/web/hue_direction.py": {
+      "sha256": "f62bbbf996f2602a26c5300b0c303a86a8d1481abb806b600e68bd63d0426e54"
+    },
+    "R5ColorLab/web/hybrid_response.py": {
+      "sha256": "f64d17260d972a67807ec3623615c3cf06e224786f1e8e7c71fbecef3f575eac"
+    },
+    "R5ColorLab/web/icc_reference.py": {
+      "sha256": "4a71cf602b408476642a99a52974752cba58eec4069cc4d29c0017d65593fd5c"
+    },
+    "R5ColorLab/web/measured_response.py": {
+      "sha256": "469676ea7a7f14de664a741f9519de2e36f12f6abe152dd2e33910dcf47c351f"
+    },
+    "R5ColorLab/web/multiround.py": {
+      "sha256": "6dd9e6763910c00dfec371ad839a8885297d7e7af46c1b185f56d4a1de33e875"
+    },
+    "R5ColorLab/web/native_alternation.py": {
+      "sha256": "2e790776912d094a5ada8638e408bcdb4e94a2547e4e2f9619b2c6f046c37dc3"
+    },
+    "R5ColorLab/web/optimizer_policy.py": {
+      "sha256": "de12edd4ba4e2f42a015a48c5c9058a24787c9d819c849415d40274e3383c60a"
+    },
+    "R5ColorLab/web/output_continuity.py": {
+      "sha256": "5602732fd2e099db18e1ae3c7c39d77f1ce39e7c9d2e8a3bf98ae684b60d198f"
+    },
+    "R5ColorLab/web/paired_coordinates.py": {
+      "sha256": "9a723c8ec3743b402b504b2af24c995e3505e0be8b0742a2effe81dab3af0f36"
+    },
+    "R5ColorLab/web/paired_response.py": {
+      "sha256": "b37767a50efb07725e8849dfdf8a127e5966b6c01b4764869179747a93b6ff1e"
+    },
+    "R5ColorLab/web/parameter_smoothing.py": {
+      "sha256": "762f7ce2e995466317d69c37085051b9ac2cfda0933ea919822a983267293472"
+    },
+    "R5ColorLab/web/patch_sampling.py": {
+      "sha256": "1f1630da68bc97bc984e8fb05a05c7e81baae53d44e006a3f2e0b1b7e5a3f75f"
+    },
+    "R5ColorLab/web/pc_compensation.py": {
+      "sha256": "6ba8ea4025754ae94f37cd24d6ecf4ef162d1cf5278721fe6c8a0b23e9012fa5"
+    },
+    "R5ColorLab/web/pc_stages.py": {
+      "sha256": "38d216ffb7a87b73f045b68f8f55a916f2d5e2f18662b6283797e8da456f11c1"
+    },
+    "R5ColorLab/web/perceptual.py": {
+      "sha256": "ba20ad62a1abb88cd7ce7ec4ee8b0debfc9f314e8107573bfeef04367d6313a8"
+    },
+    "R5ColorLab/web/photo_backend.py": {
+      "sha256": "473b1983c965e19300c47599a47e7d6dca29a156376c143372d638dc147ced9e"
+    },
+    "R5ColorLab/web/photo_preview.py": {
+      "sha256": "80727f209fd00a2ca482323174b57747a20d36414cee9a8300b433f2d020e766"
+    },
+    "R5ColorLab/web/post_gray_refinement.py": {
+      "sha256": "62b135e2c5252340b720fa3c0b589270772a4fa44de5dbc9c8ef9d13e7bab2bb"
+    },
+    "R5ColorLab/web/postfit_deburr.py": {
+      "sha256": "b0ba98b0fa1964ed0675e0c5a19d64a793ef1f32184523266126b7e67617da5f"
+    },
+    "R5ColorLab/web/precision_sampling.py": {
+      "sha256": "9d860876ecc61f0014bc9da5bbd2e200ffd9349443272ff96f7469b1ae307eab"
+    },
+    "R5ColorLab/web/sector16.py": {
+      "sha256": "0b89a0652a007c76c7c7c3b8e9d3a0ef246baf597c76a1b5403ab84dcf319e37"
+    },
+    "R5ColorLab/web/sensor_encoding.py": {
+      "sha256": "c25f89f0457545614f6f115e61bed0185d06475969da7841fb948238475e1983"
+    },
+    "R5ColorLab/web/server.py": {
+      "sha256": "1f3b266664614a65ffa6509b7b4c2e8d02dc727dd25d2083342f7062072e967d"
+    },
+    "R5ColorLab/web/shape_preserving.py": {
+      "sha256": "10d0ef23893cf53eae22aa8adf53560ed12c1f48240274fd9f91966a6ab57a13"
+    },
+    "R5ColorLab/web/shared_c1_response.py": {
+      "sha256": "df9314ba7ee3f31b692367ab097899375f41fe3df268d6bf7a304eb324f1a6a0"
+    },
+    "R5ColorLab/web/stack_objective.py": {
+      "sha256": "f3899a87b285bd652718e6efd2a0d3712053712f439f88dc353f42ccef94709a"
+    },
+    "R5ColorLab/web/stack_training.py": {
+      "sha256": "65811e153aac3c401d166056cdca21dd42ec9cccf00dc5986bc0bb66b81c64a1"
+    },
+    "R5ColorLab/web/static/app.js": {
+      "sha256": "665d2d0125e516f50a7d5d2888aefebd37eb40ca737588bba728cc261aac5988"
+    },
+    "R5ColorLab/web/static/index.html": {
+      "sha256": "bf53f2f001431172b86a9d6ddb1897738a48dce314fd2bc18c8b731b89b12083"
+    },
+    "R5ColorLab/web/static/style.css": {
+      "sha256": "7df7e029e5f239232918da5e5a3b25ab756fec69f911a79a9a827087db3a992c"
+    },
+    "R5ColorLab/web/stock_grids.py": {
+      "sha256": "e8dcca97e7af710969c5e181b36d1c38a52ebbf055ed18c95da58a47ba36f2cc"
+    },
+    "R5ColorLab/web/target_neighborhood.py": {
+      "sha256": "0c51bbba9f4ce072fc70f3be6b25288317153ee25a15e9541cf0dae40cfcfbf0"
+    },
+    "R5ColorLab/web/test_paired_nonlinear.py": {
+      "sha256": "30e2b910245c031ed15a489bc49a3bb257cd5fdf2475f900474b3e5ed4e10abe"
+    },
+    "R5ColorLab/web/testdata/AdobeRGB1998.icc": {
+      "sha256": "ac1bcf9aa29b4459f33919e07fdd584b70781a5b4205898e8eb99117dcebc34a"
+    },
+    "R5ColorLab/web/tonal_sampling.py": {
+      "sha256": "03b988f8c46522f6a820da2cdad122c39d18eff1eb9a72a552fdadc136f55440"
+    },
+    "R5ColorLab/web/training_policy.py": {
+      "sha256": "fa94a4edd0cf2acd8081809e111c859a681941ef016fb4720cfbd21f89b53b52"
+    },
+    "R5ColorLab/web/training_progress.py": {
+      "sha256": "3679b9e735512320bb05c9cf944bd29c1abbc005f544d1095a702f4bc3a19673"
+    },
+    "R5ColorLab/web/v3_dataset.py": {
+      "sha256": "9f18f1d199a532bee0f8b7ee6b9e9127937ecf8c9872a537ebc7b5d3a0345535"
+    },
+    "R5ColorLab/web/v45_dataset.py": {
+      "sha256": "5ab078ad41d319b3fc4bad16b8d12a373f0ebd44a1d6cbd34d2a305ce142376a"
+    },
+    "R5ColorLab/web/v4_dataset.py": {
+      "sha256": "b7d1b6600d32e8dd0aa63748f65394b3932306167f18551b89a923a14c71c289"
+    },
+    "R5ColorLab/web/validation_raw.py": {
+      "sha256": "93a8cd6b130d5e0b3f37f118f3da7cf7de99c4f0c7648fb1df25f3d405f75665"
+    },
+    "R5ColorLab/web/white_balance.py": {
+      "sha256": "ba1f108e53cafad61e9aa4f9e32db9106bdd87d446676f6df290cff1a8df7fb4"
+    },
+    "R5ColorLab/amd/anchor_dataset.py": {
+      "sha256": "88a20cf443fc9fecc3d4b2aecfb9ed5d3dd006529b92c50f1b204b80c7350b77"
+    },
+    "R5ColorLab/amd/apple_gpu.py": {
+      "sha256": "ebddeacd471079158d1095afefc69bd6cf4638592e3a19ccf0b99dbc07913689"
+    },
+    "R5ColorLab/amd/atomic_file.py": {
+      "sha256": "395f14a287fcc6f37aad0a0b7117998fbd66d80b2b7fa3f910bef084d481d63e"
+    },
+    "R5ColorLab/amd/balanced_chart.py": {
+      "sha256": "0f32466caa2e89998bb3b719cdfbb6e05cc5e9543562b1b42559b0c30246b73c"
+    },
+    "R5ColorLab/amd/baseline.py": {
+      "sha256": "7ab0463c2e9b08ba8dd2164d3b2e432d8e010ce817a01fdfbeb52f8392d945dd"
+    },
+    "R5ColorLab/amd/batch_multiround.py": {
+      "sha256": "389e5791c9d6caf09e725b1cbcb04a7d057396a1cbb02815b53b09a6e04eddc9"
+    },
+    "R5ColorLab/amd/batch_training.py": {
+      "sha256": "e1376ecd8c22614d0696ec0a1639cd139bab44d12327f6bba6f89f9407350547"
+    },
+    "R5ColorLab/amd/build_anchor_chart.py": {
+      "sha256": "254803fe7a9c22696167769f9c0b44e8c699ddf83db2ad7fc5235403a7d54aa1"
+    },
+    "R5ColorLab/amd/build_chart24.py": {
+      "sha256": "a7d71d9e44a1a3d0304850b25278194835a202fe48bc58f21849137375360b1d"
+    },
+    "R5ColorLab/amd/chart_datasets.py": {
+      "sha256": "d55e5023a05660fc12ea803f9649357a96844dcc0e18806ca440a584d6f855f3"
+    },
+    "R5ColorLab/amd/chart_target.py": {
+      "sha256": "53f1564a81118edaa128edcb11902520f8dcbabe14a0569923517e098caf502e"
+    },
+    "R5ColorLab/amd/colorchecker24.py": {
+      "sha256": "508b0aa4d43e905aeea6eda5543373e1778ae34693271d86e3d3b162a2dfc0ea"
+    },
+    "R5ColorLab/amd/compressed_alternation.py": {
+      "sha256": "da9b68e2e70693d9a68639ed6cd9889f093b859710f7805bfcb6eb42155253df"
+    },
+    "R5ColorLab/amd/compute_backend.py": {
+      "sha256": "279c2f842e888a5afd6bf3714ee013f749e686e2c2d9906ad90d7249b655fede"
+    },
+    "R5ColorLab/amd/concave_gamma.py": {
+      "sha256": "a0716094b918c07373cd8037dc2d19f73f96c220dfce1927832638a8ecb58d19"
+    },
+    "R5ColorLab/amd/continuity_grid.py": {
+      "sha256": "3978af429208d000d75a392e913ed34e08547073b092169113a1396121606b0c"
+    },
+    "R5ColorLab/amd/core.py": {
+      "sha256": "795101cc96d3d1cb9bbdc69f1bdbbaa0c8bdd4e6f2783fec86f73e3d9996b9c8"
+    },
+    "R5ColorLab/amd/draft_preview.py": {
+      "sha256": "84614d1182d144eebd2688f36c13ab2d03892cc2f0d0440487e5e8cfc21f792f"
+    },
+    "R5ColorLab/amd/exact_icc.py": {
+      "sha256": "e071990fcb583da5c49a44f5747e6eca2c241eea354394a07b2d30335c73a705"
+    },
+    "R5ColorLab/amd/export_policy423.py": {
+      "sha256": "3abbbc2a1e1987b46f12ec7c81f4d7ad312258996a0be11475d88b21d175049f"
+    },
+    "R5ColorLab/amd/file_storage.py": {
+      "sha256": "f7f26416c406ffe80fafc9868260830cbed4cebc36b0c21a86f53682e9f05148"
+    },
+    "R5ColorLab/amd/fit_anchor_native.py": {
+      "sha256": "b619525049a58b1cf68e1d6a9f0fd927ff1740c1669e84fb43c3016fb85a2af3"
+    },
+    "R5ColorLab/amd/formal_server.py": {
+      "sha256": "9e805c79e009d305ea2dfed670fd9be10816b4da7831745b9ea04575f8d1b577"
+    },
+    "R5ColorLab/amd/gamma_color_recovery.py": {
+      "sha256": "ae6bbc650e87fbc1aa902719f4beb9d777ab245a8b09a8c1a3add055f3abb255"
+    },
+    "R5ColorLab/amd/gamma_diagnostics.py": {
+      "sha256": "bd1c68f8e22c6d5bd7e3973407ff58cc0d0cc5060bb56832cf668047fcd8ea31"
+    },
+    "R5ColorLab/amd/gamma_global_correction.py": {
+      "sha256": "356e024c509c058099667ec623d2669ed0692badf3ada6b65b656b10c9967c03"
+    },
+    "R5ColorLab/amd/gpu_alternation.py": {
+      "sha256": "51b52595450d81c19b05a70aa8761e3fd253cd15179fd3d8876b00899aa658ad"
+    },
+    "R5ColorLab/amd/gpu_color.py": {
+      "sha256": "3ea2a1a375b1d97be54db23f8df8264dc3fc59dee8e457e1788ae80d349c3708"
+    },
+    "R5ColorLab/amd/gpu_grid.py": {
+      "sha256": "025636161d1ac847dc74c0867dad9d6f4eb2e882e0edd5de35505c908c240025"
+    },
+    "R5ColorLab/amd/gpu_grid_refine.py": {
+      "sha256": "ba08dc8700d12795bf86d576498684eed37beeba7fea83158fdaede14c077333"
+    },
+    "R5ColorLab/amd/gpu_optimizer.py": {
+      "sha256": "e3ac4b5ccaaecc74e0087aea3674cbb05843b48d65f95576f50ffe54aa13dec9"
+    },
+    "R5ColorLab/amd/gpu_runtime.py": {
+      "sha256": "4e2b9c637faeb96afd005944b394fd3734ad96f676379e9da3f8caa8ce5ecaa4"
+    },
+    "R5ColorLab/amd/gpu_tensor.py": {
+      "sha256": "972b478e542b58a82e4d70e1fa70d4e62e9105858c1dcd1953fe4c5272cade50"
+    },
+    "R5ColorLab/amd/grid_distillation.py": {
+      "sha256": "a189dee9021fa733c23aa1fc549382e58957b7930f32c74578fc44d5a0f20082"
+    },
+    "R5ColorLab/amd/grid_models.py": {
+      "sha256": "e811967970b0375a13fc38c72a2693314999e9db2f0fedfcd44d55dbe9bfb8e0"
+    },
+    "R5ColorLab/amd/grid_regularization.py": {
+      "sha256": "a97700eb8cb19e8f71edf6b460d2d0b1ba8ea650949e79a067111639081e639a"
+    },
+    "R5ColorLab/amd/hue_direction.py": {
+      "sha256": "f62bbbf996f2602a26c5300b0c303a86a8d1481abb806b600e68bd63d0426e54"
+    },
+    "R5ColorLab/amd/hybrid_response.py": {
+      "sha256": "f64d17260d972a67807ec3623615c3cf06e224786f1e8e7c71fbecef3f575eac"
+    },
+    "R5ColorLab/amd/icc_reference.py": {
+      "sha256": "f752c03e422bdf568891bf0af530fd3879836e6bc0b5f7a8ef91fc2592e8828c"
+    },
+    "R5ColorLab/amd/measured_response.py": {
+      "sha256": "50b5382a5579459c5ccebacfb49c369ce3c6ec37fbc71588630146393352cd0c"
+    },
+    "R5ColorLab/amd/multiround.py": {
+      "sha256": "6dd9e6763910c00dfec371ad839a8885297d7e7af46c1b185f56d4a1de33e875"
+    },
+    "R5ColorLab/amd/native_alternation.py": {
+      "sha256": "2e790776912d094a5ada8638e408bcdb4e94a2547e4e2f9619b2c6f046c37dc3"
+    },
+    "R5ColorLab/amd/optimizer_policy.py": {
+      "sha256": "de12edd4ba4e2f42a015a48c5c9058a24787c9d819c849415d40274e3383c60a"
+    },
+    "R5ColorLab/amd/output_continuity.py": {
+      "sha256": "5602732fd2e099db18e1ae3c7c39d77f1ce39e7c9d2e8a3bf98ae684b60d198f"
+    },
+    "R5ColorLab/amd/paired_coordinates.py": {
+      "sha256": "5b338648bc2e4ac507d16a56ff89c24b53b4bb8afcb3d4d3109c1f48881e424f"
+    },
+    "R5ColorLab/amd/paired_response.py": {
+      "sha256": "b37767a50efb07725e8849dfdf8a127e5966b6c01b4764869179747a93b6ff1e"
+    },
+    "R5ColorLab/amd/parameter_smoothing.py": {
+      "sha256": "762f7ce2e995466317d69c37085051b9ac2cfda0933ea919822a983267293472"
+    },
+    "R5ColorLab/amd/patch_sampling.py": {
+      "sha256": "1f1630da68bc97bc984e8fb05a05c7e81baae53d44e006a3f2e0b1b7e5a3f75f"
+    },
+    "R5ColorLab/amd/pc_compensation.py": {
+      "sha256": "2f6ca8da4fa46aef1a0a2b286ac59cff075d5608ad57556fb18b6eaf43d7625b"
+    },
+    "R5ColorLab/amd/pc_stages.py": {
+      "sha256": "38d216ffb7a87b73f045b68f8f55a916f2d5e2f18662b6283797e8da456f11c1"
+    },
+    "R5ColorLab/amd/perceptual.py": {
+      "sha256": "ba20ad62a1abb88cd7ce7ec4ee8b0debfc9f314e8107573bfeef04367d6313a8"
+    },
+    "R5ColorLab/amd/photo_backend.py": {
+      "sha256": "473b1983c965e19300c47599a47e7d6dca29a156376c143372d638dc147ced9e"
+    },
+    "R5ColorLab/amd/photo_preview.py": {
+      "sha256": "7a975f131bcebbbe8136fc63ed025e953c8ca0a2b78d0435a617c9c5b8b27128"
+    },
+    "R5ColorLab/amd/post_gray_refinement.py": {
+      "sha256": "62b135e2c5252340b720fa3c0b589270772a4fa44de5dbc9c8ef9d13e7bab2bb"
+    },
+    "R5ColorLab/amd/postfit_deburr.py": {
+      "sha256": "03a8d7a302b17da716c1b0d7993d6ffdf0cbac066591e9f616a8352dfd95a04e"
+    },
+    "R5ColorLab/amd/precision_sampling.py": {
+      "sha256": "9d860876ecc61f0014bc9da5bbd2e200ffd9349443272ff96f7469b1ae307eab"
+    },
+    "R5ColorLab/amd/sector16.py": {
+      "sha256": "0b89a0652a007c76c7c7c3b8e9d3a0ef246baf597c76a1b5403ab84dcf319e37"
+    },
+    "R5ColorLab/amd/sensor_encoding.py": {
+      "sha256": "c25f89f0457545614f6f115e61bed0185d06475969da7841fb948238475e1983"
+    },
+    "R5ColorLab/amd/server.py": {
+      "sha256": "f9d45c085e04e385658797f19dd2025d350b3a16aa26a211bb821d984564e4da"
+    },
+    "R5ColorLab/amd/shape_preserving.py": {
+      "sha256": "10d0ef23893cf53eae22aa8adf53560ed12c1f48240274fd9f91966a6ab57a13"
+    },
+    "R5ColorLab/amd/stack_objective.py": {
+      "sha256": "f3899a87b285bd652718e6efd2a0d3712053712f439f88dc353f42ccef94709a"
+    },
+    "R5ColorLab/amd/stack_training.py": {
+      "sha256": "72ea523e5a9dd11ffc6db882341a4da2c0dc34854873e1cea59d50154d27c04c"
+    },
+    "R5ColorLab/amd/static/app.js": {
+      "sha256": "44416ed6bfc15917751d74d974ad544ad73b812d4ec82bb5d720d6065bd70cdc"
+    },
+    "R5ColorLab/amd/static/index.html": {
+      "sha256": "ddedce65748cfeb79afd7c736a5bdccf303ba3c52a1f14dda5c4ea27092140d3"
+    },
+    "R5ColorLab/amd/static/style.css": {
+      "sha256": "7df7e029e5f239232918da5e5a3b25ab756fec69f911a79a9a827087db3a992c"
+    },
+    "R5ColorLab/amd/stock_grids.py": {
+      "sha256": "8dcc5b8da32f8d8c10324632a61d4a0f3ce2bf78704dd37ffe54c0ce78b83d32"
+    },
+    "R5ColorLab/amd/target_neighborhood.py": {
+      "sha256": "0c51bbba9f4ce072fc70f3be6b25288317153ee25a15e9541cf0dae40cfcfbf0"
+    },
+    "R5ColorLab/amd/tonal_sampling.py": {
+      "sha256": "03b988f8c46522f6a820da2cdad122c39d18eff1eb9a72a552fdadc136f55440"
+    },
+    "R5ColorLab/amd/training_policy.py": {
+      "sha256": "fa94a4edd0cf2acd8081809e111c859a681941ef016fb4720cfbd21f89b53b52"
+    },
+    "R5ColorLab/amd/training_progress.py": {
+      "sha256": "33a266ce4cfa746a2df3074230b8eb58c2d29c5b48a9f3072f8351718545ff3a"
+    },
+    "R5ColorLab/amd/v3_dataset.py": {
+      "sha256": "5f78eb89746479dbbd35ea339bd4c80cb0bcafe15cfa67531e66d2e3f83bdaa5"
+    },
+    "R5ColorLab/amd/v45_dataset.py": {
+      "sha256": "729f5a0a9ce91a75baa0ba2b7ea3df4ce28f5556342d86b3b62f10de4bbe58d0"
+    },
+    "R5ColorLab/amd/v4_dataset.py": {
+      "sha256": "bb6e55d8006ebb51278fe2a001b5a2b95521427cd4a59ccb6a5c1022673aa14e"
+    },
+    "R5ColorLab/amd/validation_raw.py": {
+      "sha256": "93a8cd6b130d5e0b3f37f118f3da7cf7de99c4f0c7648fb1df25f3d405f75665"
+    },
+    "R5ColorLab/amd/white_balance.py": {
+      "sha256": "ba1f108e53cafad61e9aa4f9e32db9106bdd87d446676f6df290cff1a8df7fb4"
+    },
+    "R5ColorLab/scripts/audit_edit_renderer.py": {
+      "sha256": "e1d0c0a74cd1cb35d95a9f3ae6830b3edbcce525f5fd5db860b24dbd2dc1fd75"
+    },
+    "R5ColorLab/scripts/edit_color_pipeline.py": {
+      "sha256": "7edc0279586d67b4c01fd50544beb8fdc0d444aa1276f53c9f44bad90c82f701"
+    },
+    "R5ColorLab/scripts/edit_native_model.py": {
+      "sha256": "62339039931ee8ac46801dc9849216a52f5f5689dfafcb1015ae5257d3f597b9"
+    },
+    "R5ColorLab/scripts/edit_native_recipe.py": {
+      "sha256": "c7c7b8982c70c76cacf6ed088ff7698dc11ce7a595569ddf797797c8a171d3ed"
+    },
+    "R5ColorLab/scripts/edit_parameter_context.py": {
+      "sha256": "6aec9a71b7aa1b52d73ea35fe60d26b217b48b0234775ce88a90a3ad5b4eaf9c"
+    },
+    "R5ColorLab/scripts/edit_raw_front.py": {
+      "sha256": "010e0b3af24b1fbac195c62216f3fafed8f7f042215893e7e712f99d2b3c1ab8"
+    },
+    "R5ColorLab/scripts/fit_edit_native.py": {
+      "sha256": "bb9e6c456aa1431595984c808c6fd81b2515709144be739d4ceae4e9f27ccde1"
+    },
+    "R5ColorLab/scripts/fit_native_proxy.py": {
+      "sha256": "78607c75d8207e3723dee61faf8833683ee22b0ba19fe17dcd0b210cc7f94ea3"
+    },
+    "R5ColorLab/scripts/look_recipe.py": {
+      "sha256": "e4d60b43dc8abbc3a928fcaa3ed510d157994979b07d5706e53302f7fc16baf5"
+    },
+    "R5ColorLab/scripts/raw_slog3_reference.py": {
+      "sha256": "26f18cde26c2d0e58dcd2d51fe3bb8e7baf3005c272467b31977268c03fde7dc"
+    },
+    "R5ColorLab/scripts/replay_edit_parameter_context.py": {
+      "sha256": "22d0b33129fb2ac4f952267b76ae6b3b3df3e00844024300b7514897cd15cb0a"
+    },
+    "R5ColorLab/scripts/replay_edit_parameters.py": {
+      "sha256": "e190c9242f4c7760a40a9c64e7144bbe5a7d58cfdb37b622092cf5e89c1ae6bd"
+    },
+    "R5ColorLab/scripts/residual_grid.py": {
+      "sha256": "683e2f729b7676b6280a787eebad65ec0df277fe23bffde90d5275fe0a143e4c"
+    },
+    "R5ColorLab/scripts/sony_arw_metadata.py": {
+      "sha256": "e034f6a97e9ee66fc95785f1151adef58083759fc053f0a904a5d57d6c559383"
+    },
+    "R5ColorLab/scripts/validate_synthetic_pairs.py": {
+      "sha256": "ac30b5708a1655a9b17441a25baaab80c5b7796c8fa72accdc572ce005b4e31d"
+    },
+    "R5ColorLab/scripts/write_fitted_st_raw.py": {
+      "sha256": "2ce6506c9d299977acb67bfb51a64bc61c2baba8647f227cbe6682935ca83602"
+    },
+    "R5ColorLab/compilers/custom_filter_v4.py": {
+      "sha256": "e99c610ea7092108adf2ecfaa921fe9445baacf2898953e6a0bbbe6dbe0a7b52"
+    },
+    "R5ColorLab/compilers/native_v2.py": {
+      "sha256": "b654c6e44d844b6f436b0e38aa126b7b0864205fb99484f0203a0c0898945ce0"
+    },
+    "R5ColorLab/compilers/native_v3.py": {
+      "sha256": "b654c6e44d844b6f436b0e38aa126b7b0864205fb99484f0203a0c0898945ce0"
+    },
+    "R5ColorLab/tests/fixtures/qaq_native.py": {
+      "sha256": "e41989f32177c5497615ee469d03b4e436ac7644e333fbd8018891928729d73b"
+    },
+    "R5ColorLab/tests/fixtures/response-provenance/old-paired.py": {
+      "sha256": "c5d74177d5466149e7d7cb86214d4ca3e152d6e9ba7ad87a3227fb45bdba5940"
+    },
+    "R5ColorLab/tests/fixtures/response-provenance/old-registry-nonlinear.py": {
+      "sha256": "2ee8128f87491ac15e1885e32594620aa04c92aa7a4acd8bf15977fa5ce27ac5"
+    },
+    "R5ColorLab/tests/fixtures/response-provenance/old-registry-v2.py": {
+      "sha256": "ac25d665dde7fc285affb4be1a862a647c767e339cea0aa4b756e77693199428"
+    },
+    "R5ColorLab/tests/test_batch_training.py": {
+      "sha256": "94f96573bf87ff7098639b646d2c7b9d4da5c212ef19507dd0a5e066843e7355"
+    },
+    "R5ColorLab/tests/test_center5_sampling.py": {
+      "sha256": "c3d1dde1e7acf361b9422c4ff6410a1a52501aafb676ff40613fbda7d243b39b"
+    },
+    "R5ColorLab/tests/test_compressed_alternation.py": {
+      "sha256": "bb038bdda3cade627ecbfa2909fb2f06555086dcfce691a8304efb90b38a19a2"
+    },
+    "R5ColorLab/tests/test_compression_workflow.py": {
+      "sha256": "16053d9e153255b380b195e9883ec999e1640fe448fca97b4dc8390fe79030be"
+    },
+    "R5ColorLab/tests/test_custom_filter423.py": {
+      "sha256": "17aa1eb3d4c6f5c6ee5987a43a6cbf29dd9c4384a40517b018eb163543b78a68"
+    },
+    "R5ColorLab/tests/test_exact_icc.py": {
+      "sha256": "89658459c5d8fe4f52c7c70f2e2d45005934a2312d1023b932d5d32c21117d86"
+    },
+    "R5ColorLab/tests/test_export_policy423.py": {
+      "sha256": "085fbd6bf7e6381df4d8bfe41c249081de95a5c8d6ea2867cac3dfa691f5ccea"
+    },
+    "R5ColorLab/tests/test_file_storage.py": {
+      "sha256": "39536e0b8dc269a88b98769f1e35fba6d1f58f42f736b1cfe6cc6b22feaf4e5b"
+    },
+    "R5ColorLab/tests/test_gpu_alternation.py": {
+      "sha256": "d1c394e71c135da2ea3212ee69f82fa29c9920b341614ab6a622ebe9ddf91e24"
+    },
+    "R5ColorLab/tests/test_gpu_stages.py": {
+      "sha256": "9be85ba8bbdb84f3b019f63edc61c0bdf9310279f0f51d346da7441d19a2c0e6"
+    },
+    "R5ColorLab/tests/test_grid_compression.py": {
+      "sha256": "1693ecb023ebd19fab21876ed2df17f3400d327ea09db69e656a7fa613c6c565"
+    },
+    "R5ColorLab/tests/test_grid_distillation.py": {
+      "sha256": "6319382ead6d2c18e5e7ce8c3494dfbaedb792e196140f71deb1430db81fa7e8"
+    },
+    "R5ColorLab/tests/test_hue_direction.py": {
+      "sha256": "ee997e4bb0303087b547adefcd07829b628ceca9196ed0acca5cc5ea4b20f58c"
+    },
+    "R5ColorLab/tests/test_hybrid_response.py": {
+      "sha256": "19e53a01fb39af99dd1f19aaff786da0ab1839bf6e2de40526d45bb6dcc3771f"
+    },
+    "R5ColorLab/tests/test_integrated_training.py": {
+      "sha256": "43a8b9ae2b527d98fc9fceb902f1d336a8a9cf6b7188b2e9be4cffc91ee1a6df"
+    },
+    "R5ColorLab/tests/test_live_progress.py": {
+      "sha256": "b9e53ce461e3d71ca83605654f9418c023174488c3bd6873c467748634d65eef"
+    },
+    "R5ColorLab/tests/test_native_alternation.py": {
+      "sha256": "f2bfe5d7b5989f8750fb9ed1e298473172b22051cee85763a06286d3250b0e8d"
+    },
+    "R5ColorLab/tests/test_operator_smoothing.py": {
+      "sha256": "b53706817ed20145deb67af61bb7eabe2b466fa966f0972e864f5cb32ddb122b"
+    },
+    "R5ColorLab/tests/test_optimizer_policy.py": {
+      "sha256": "29f80f335bc96fd4412d456ad786dad09a57900ae7b7244b47977eb5088af80e"
+    },
+    "R5ColorLab/tests/test_output_continuity.py": {
+      "sha256": "be9e25c1a908c0c9cbdeda449ed940f70a61225e56830d9c7f248968c93d100c"
+    },
+    "R5ColorLab/tests/test_parameter_smoothing.py": {
+      "sha256": "69856190268eb4095113792ebe50576ef8d91cfff1b4136c0f59685e1976f579"
+    },
+    "R5ColorLab/tests/test_pc_compensation.py": {
+      "sha256": "a25250c8ea450794ce9bdd82ae9db7b6964bc014bf7333bce55d950ceb518f65"
+    },
+    "R5ColorLab/tests/test_portable.py": {
+      "sha256": "a481296eaff378293ca73e1819e42d98e11fe5f8babb8d29a37bf4004080c06e"
+    },
+    "R5ColorLab/tests/test_precision_sampling.py": {
+      "sha256": "5fd25cff891f95f46b690237b274b10f1a84c00208aec791d6c75b3c6c52e585"
+    },
+    "R5ColorLab/tests/test_pt_baseline.py": {
+      "sha256": "f92149465d35f5710d9e1ec84ebf8ccbfe1ce35f9957e4db2e045b98c09c9184"
+    },
+    "R5ColorLab/tests/test_pt_hue_precision.py": {
+      "sha256": "32b30bd19ae9c85ec4aa2f9d1e755b069706326034f170bf2f7c7c671480a79e"
+    },
+    "R5ColorLab/tests/test_qaq_grid.py": {
+      "sha256": "dac6fb2e6e9d61a344a5b4b42e94ebd256a3204d7ccab20daa5647650694dbe4"
+    },
+    "R5ColorLab/tests/test_stack_objective.py": {
+      "sha256": "92cc3dab53f722f81982efc890a75f32df561cf4bd9e441d2e2995cede7736bb"
+    },
+    "R5ColorLab/tests/test_target_curve_constraints.py": {
+      "sha256": "a3fc89d2c6c8c758d52dd04bb04a59011328f41b9b006ee5a51e86bb41f4516c"
+    },
+    "R5ColorLab/tests/test_training_policy.py": {
+      "sha256": "6c28430d1b526877a7501fe6324a51f089efd67db6394d02ebd25ae33cdd9ef3"
+    },
+    "R5ColorLab/tests/test_v45_dataset.py": {
+      "sha256": "faf3bd512ba3ed2c3a2ab0c4668c668e0e952f4fab20bcbbfcb3be28b65f2357"
+    },
+    "R5ColorLab/tests/test_v4_dataset.py": {
+      "sha256": "d93d320451d66778325b336b2448d9601e31cc5a2140b0de4f593dbde80ce2f9"
+    },
+    "R5ColorLab/tests/test_white_balance.py": {
+      "sha256": "3af619fb2c347b517ae415871275c621632fa66725090f80f471b412c9f9311a"
+    },
+    "R5ColorLab/tests/testdata/AdobeRGB1998.icc": {
+      "sha256": "ac1bcf9aa29b4459f33919e07fdd584b70781a5b4205898e8eb99117dcebc34a"
+    },
+    "R5ColorLab/launcher.py": {
+      "sha256": "2859e9a9d71222939e0fc688dcde825bffa0229d797792b920bd2745eb936a6b"
+    },
+    "R5ColorLab/formal_launcher.py": {
+      "sha256": "56c6b9b2021ee03af03554daa0389a0774f6fec57115bdd0a29e9fe8bd772774"
+    },
+    "R5ColorLab/self_check.py": {
+      "sha256": "8b1cf17145a6076afd5f3ff1121fee1b10b76ae768770340206050a89c10dae3"
+    },
+    "R5ColorLab/web/formal_profile.json": {
+      "sha256": "f3df2a8b247a3742229d75520d9f0c539037ebf0aa1a02704afa496c9dfbaf8d"
+    },
+    "R5ColorLab/amd/formal_profile.json": {
+      "sha256": "7c35deca535f87746e92fc9676a7c621342626579fe7eb684d91d31c8a428c4b"
+    }
+  }
+}

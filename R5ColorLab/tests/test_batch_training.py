@@ -76,7 +76,7 @@ class BatchTests(unittest.TestCase):
                 self.assertEqual(project['entries'],entries)
                 self.assertEqual(len(project['export_sources']),2)
                 return server.export_policy423.configuration(project),[]
-            with patch.object(server,'JOBS',jobs),patch.object(server,'work'),patch.object(grid_distillation,'firmware_config',side_effect=lambda path,*a,**kw:configs[path.name]),patch.object(server.export_policy423,'validate',side_effect=validate):batch.run(state,Path(root),server)
+            with patch.object(server,'JOBS',jobs),patch.object(server,'work'),patch.object(batch,'completed_continuation',return_value=True),patch.object(grid_distillation,'firmware_config',side_effect=lambda path,*a,**kw:configs[path.name]),patch.object(server.export_policy423,'validate',side_effect=validate):batch.run(state,Path(root),server)
             self.assertEqual(state['status'],'done',state.get('error'))
             self.assertEqual((Path(root)/'R5NATIVE.BIN').stat().st_size,128+2*2452)
             self.assertEqual(json.loads((Path(root)/'native_config.json').read_text())['entries'],entries)

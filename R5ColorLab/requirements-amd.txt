@@ -1,0 +1,4 @@
+-r requirements.txt
+imagecodecs>=2025.3.30,<2027
+# Install the AMD-supported Windows ROCm PyTorch build separately; an ordinary
+# CPU/CUDA PyPI torch build cannot replace it. See AMD.md.

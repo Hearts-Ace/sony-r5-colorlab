@@ -1,0 +1,14 @@
+{
+  "patches": 99372,
+  "retained_Edit_exact": true,
+  "known_boundary_actual": [
+    16383.0,
+    9795.0,
+    16383.0
+  ],
+  "output_sha256": "e1149c1991bc6135b952a7dc48b9f45d3763e8a08f0472e4154049f8085b6a3b",
+  "random_hue_flags_exact": 8,
+  "metal_full_capture_exact": true,
+  "metal_random_flags_exact": 8,
+  "metal_half_boundary_checks": 206132
+}

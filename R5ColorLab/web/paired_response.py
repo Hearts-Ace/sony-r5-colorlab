@@ -1,15 +1,9 @@
 """Pinned R5 paired-capture response; linear in table coefficients at fixed RGB."""
 from itertools import product
-from numbers import Real
 import numpy as np
-from scipy import sparse
-from scipy.optimize import least_squares
 
 _DETAIL_INDICES=np.array([a*9+b*3+c for a,b,c in product(range(3),repeat=3)
                           if (a,b,c) not in tuple(product((0,2),repeat=3))])
-_EXPERT_DIRECTIONS=np.array([[1.,0.],[-.5,np.sqrt(3)/2],[-.5,-np.sqrt(3)/2]])
-
-
 def _c1_basis(x):
     """27 hierarchical bases in the exact calibrator coefficient order."""
     ends=np.stack([1-x,x],axis=2)
@@ -39,19 +33,14 @@ class PairedModel:
         self.weights=np.asarray(value['response_weights'],float)
         self.smooth=value['smooth'];self.validation=value['report']
         self.quadratic=value.get('response_basis')=='rgb-quadratic'
-        self.hue_experts=value.get('response_basis')=='rgb-hue-experts-c1/1'
-        if self.hue_experts:
-            self.expert_weights=np.asarray(value['expert_weights'],float)
-            self.expert_gate=dict(value.get('expert_gate',dict(kappa=2.,s0=.25,c0=.04)))
-            if set(self.expert_gate)!={'kappa','s0','c0'} or any(
-                isinstance(v,(bool,np.bool_)) or not isinstance(v,Real) or not np.isfinite(v) or v<=0
-                for v in self.expert_gate.values()):raise ValueError('Invalid paired hue-expert gate')
-            if self.expert_weights.shape!=(3,81,3) or not np.isfinite(self.expert_weights).all():raise ValueError('Invalid paired hue-expert response')
         self.warp=value.get('coordinate_warp')
         if self.warp is not None:
             from paired_coordinates import validate
             validate(self.warp,self.affine)
-        if self.affine.shape!=(3,4) or self.weights.shape!=((81,3) if self.hue_experts else (30,3) if self.quadratic else (12,3) if self.smooth else (3,3)) or not np.isfinite(self.affine).all() or not np.isfinite(self.weights).all():raise ValueError('Invalid paired response model')
+        if (not self.quadratic or not self.smooth or self.affine.shape!=(3,4)
+                or self.weights.shape!=(30,3) or not np.isfinite(self.affine).all()
+                or not np.isfinite(self.weights).all()):
+            raise ValueError('Hybrid base requires a finite quadratic 30x3 response')
     def coordinates(self,rgb):
         from paired_coordinates import coordinates
         return coordinates(rgb,self.affine,self.warp)
@@ -60,17 +49,6 @@ class PairedModel:
         c=self.coordinates(rgb);ids,w=stencil(c);return c,ids,w
     def response(self,rgb):
         x=np.asarray(rgb,float)
-        if self.hue_experts:
-            b=_c1_basis(x)
-            shared=np.einsum('nb,cbo->nco',b,self.weights.reshape(3,27,3))
-            experts=np.einsum('nb,ecbo->neco',b,self.expert_weights.reshape(3,3,27,3))
-            z=np.column_stack([x[:,0]-(x[:,1]+x[:,2])/2,np.sqrt(3)/2*(x[:,1]-x[:,2])])
-            q=np.sum(z*z,axis=1);gate=self.expert_gate
-            logits=gate['kappa']*(z@_EXPERT_DIRECTIONS.T)/gate['s0']
-            logits-=logits.max(axis=1,keepdims=True)
-            p=np.exp(logits);p/=p.sum(axis=1,keepdims=True)
-            w=(q/(q+gate['c0']**2))[:,None]*p
-            return (shared+np.einsum('ne,neco->nco',w,experts))/256
         r=np.broadcast_to(self.weights[:3],(len(x),3,3)).copy()
         if self.smooth:r+=np.einsum('nj,cjo->nco',x-.5,self.weights[3:12].reshape(3,3,3))
         if self.quadratic:
@@ -89,17 +67,6 @@ class PairedModel:
         return out
     def response_tensor(self,tools,rgb):
         t=tools.torch
-        if self.hue_experts:
-            # Every RGB-dependent operation stays in Torch: gradients through
-            # basis, neutral attenuation and expert mixing reach native fits.
-            b=_c1_basis_tensor(tools,rgb)
-            shared=t.einsum('nb,cbo->nco',b,tools.tensor(self.weights.reshape(3,27,3)))
-            experts=t.einsum('nb,ecbo->neco',b,tools.tensor(self.expert_weights.reshape(3,3,27,3)))
-            z=t.stack([rgb[:,0]-(rgb[:,1]+rgb[:,2])/2,np.sqrt(3)/2*(rgb[:,1]-rgb[:,2])],dim=1)
-            q=(z*z).sum(dim=1);gate=self.expert_gate
-            logits=gate['kappa']*(z@tools.tensor(_EXPERT_DIRECTIONS).T)/gate['s0']
-            w=(q/(q+gate['c0']**2))[:,None]*t.softmax(logits,dim=1)
-            return (shared+t.einsum('ne,neco->nco',w,experts))/256
         z=rgb-.5
         r=tools.tensor(self.weights[:3]).expand(len(rgb),3,3)
         if self.smooth:r=r+t.einsum('nj,cjo->nco',z,tools.tensor(self.weights[3:12].reshape(3,3,3)))
@@ -132,6 +99,8 @@ class PairedModel:
                 calibration_validation=self.validation,new_scene_camera_verified=False)
             return result,audit
         from pc_stages import neighbor_design
+        from scipy import sparse
+        from scipy.optimize import least_squares
         x=np.asarray(base,float);target=np.asarray(target,float);weights=np.asarray(weights,float)
         if x.shape!=target.shape or weights.shape!=(len(x),) or np.any(weights<=0):raise ValueError('Invalid paired training samples')
         _,ids,w=self.stencil(x);r=self.response(x);mass=np.sqrt(weights/weights.sum())

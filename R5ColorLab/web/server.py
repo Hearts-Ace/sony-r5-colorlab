@@ -104,7 +104,7 @@ def work(identifier, body, resume=False):
                 raise ValueError('已有拟合色卡版本不符')
             job.update(phase='复用已完成的原生拟合，接续补偿与压缩')
         else:
-            fit_native(identifier,body,output,job)
+            fit_native(identifier,body,output,job,resume=resume)
         # Metal command encoders in one service process must not be entered
         # from concurrent batch/HTTP threads. Native fit subprocesses remain
         # independent and retain the requested batch concurrency.
@@ -126,13 +126,25 @@ def work(identifier, body, resume=False):
         (output / 'job.json').write_bytes(dump({k: v for k, v in job.items() if k != 'process'}))
 
 
-def fit_native(identifier,body,output,job):
+def fit_native(identifier,body,output,job,resume=False):
         if body.get('target_kind') == 'chart-image':
             source_path=core.HERE/'chart_uploads'/body['target_id']/'source.bin'
             data=source_path.read_bytes()
             if core.sha(data)!=body['target_sha256']:
                 raise ValueError('目标图上传来源发生变化')
-            chart_target.prepare(data,output,source_path=source_path,dataset_id=body.get('dataset_id'))
+            prepared=resume and all((output/name).is_file() for name in
+                ('pairs.npz','chart_target.json','input_audit.json','target-image.bin'))
+            if prepared:
+                audit=json.loads((output/'chart_target.json').read_text())
+                inputs=json.loads((output/'input_audit.json').read_text())
+                import hashlib
+                with (output/'target-image.bin').open('rb') as stream:
+                    target_sha=hashlib.file_digest(stream,'sha256').hexdigest()
+                if (audit['source_sha256']!=body['target_sha256'] or target_sha!=body['target_sha256']
+                        or inputs.get('dataset_id')!=body.get('dataset_id')):
+                    raise ValueError('中断任务的目标或色卡版本不一致，拒绝接续')
+            else:
+                chart_target.prepare(data,output,source_path=source_path,dataset_id=body.get('dataset_id'))
             description='source-bound measured RAW frontend -> processed chart image / sRGB'
         else:
             lut = output / 'input.cube'
@@ -153,6 +165,15 @@ def fit_native(identifier,body,output,job):
             cmd.append('--fast')
         elif body.get('pc_compensation',False):
             cmd.append('--pc-compensation')
+        if resume:
+            import shutil
+            archive=output/'interrupted_native'/uuid.uuid4().hex
+            archive.mkdir(parents=True)
+            if (output/'fit').exists():
+                (output/'fit').rename(archive/'fit')
+            for name in ('fit.log','training_progress.json'):
+                if (output/name).is_file():
+                    shutil.copy2(output/name,archive/name)
         with (output / 'fit.log').open('w') as log:
             process = subprocess.Popen(cmd, stdout=log, stderr=subprocess.STDOUT,
                                        env={**os.environ, 'OPENBLAS_NUM_THREADS': '1', 'VECLIB_MAXIMUM_THREADS': '1'})
@@ -200,6 +221,10 @@ def validate_fit(body):
     body['search_options']=search_options(body.get('search_options'))
     body['pc_options']=pc_options(body.get('pc_options'))
     if type(body.get('compression_training',False)) is not bool:raise ValueError('压缩训练开关无效')
+    if body['search_options'].get('postfit_deburr'):
+        # The repair acts on the exported grid, so this mode always completes
+        # that grid rather than silently ending at an uncorrected PC teacher.
+        body['compression_training']=True
     if body.get('compression_training'):
         body['pc_compensation']=True
         body['pc_options']=pc_options(dict(curve_mode='tone-tint',grid_enabled=True,response=body['pc_options']['response']))
@@ -478,6 +503,20 @@ class Handler(BaseHTTPRequestHandler):
             body = json.loads(self.rfile.read(length), object_pairs_hook=core.compiler.unique,
                               parse_constant=lambda _: (_ for _ in ()).throw(ValueError('Nonfinite JSON')))
             path = urlparse(self.path).path
+            if path.startswith('/api/jobs/') and path.endswith('/draft-diagnostics'):
+                bits=path.split('/')
+                identifier=bits[3] if len(bits)==5 else None
+                job=JOBS.get(identifier)
+                if not job or job['status'] not in ('done','error'):
+                    raise ValueError('请先选择已完成的训练任务')
+                if not isinstance(body,dict):
+                    raise ValueError('无效草稿请求')
+                from draft_preview import diagnostics
+                with RAW_LOCK:
+                    result=diagnostics(RUNS/identifier,body.get('entry'),
+                                       pc=body.get('pc',False),grid_key=body.get('grid') or None,
+                                       mode=body.get('mode','preview'))
+                return self.respond(result)
             if path == '/api/preview-reuse':
                 job_id=body.get('job');reuse_id=body.get('preview');item=PREVIEWS.get(reuse_id)
                 if job_id not in JOBS or not item or item['job']!=job_id or item['status']!='done':
@@ -563,6 +602,11 @@ class Handler(BaseHTTPRequestHandler):
                 return self.respond(dict(valid=True, bytes=len(data), sha256=core.sha(data)))
             if path == '/api/batches':
                 return self.respond(batch_training.submit(body, sys.modules[__name__]), status=202)
+            if path.startswith('/api/batches/') and path.endswith('/resume'):
+                bits=path.split('/')
+                if len(bits)!=5:
+                    raise ValueError('批量编号无效')
+                return self.respond(batch_training.resume(bits[3],sys.modules[__name__]),status=202)
             if path == '/api/fit':
                 validate_fit(body)
                 with LOCK:

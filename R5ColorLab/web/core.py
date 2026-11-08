@@ -138,6 +138,15 @@ def finish_fit(output, number, short_name, full_name, gamma_endpoint128=None):
         conversion_path.write_text(json.dumps(projected, separators=(',', ':'))+'\n')
     capture,context=baseline.for_job(output)
     native, audit = compiler.from_fit(conversion_path, capture, number, short_name, full_name, gamma_endpoint128)
+    saved_recipe=json.loads(original_recipe)
+    if saved_recipe.get('fitting',{}).get('search_options',{}).get('gamma_monotone_concave',False):
+        from concave_gamma import ConcaveGamma
+        shape=ConcaveGamma(saved_recipe['parameters']['gamma_7805_x'])
+        serialized=[int(v)*2 for v in native['entries'][0]['gamma_native_129'][:128]]
+        checked=shape.audit_even(serialized)
+        if not checked['passed'] or serialized!=saved_recipe['parameters']['gamma_7806_y']:
+            raise ValueError('Gamma serialized native nodes lost concavity or changed values')
+        audit['gamma_monotone_concave']=checked
     if conversion_path != recipe_path:
         audit['compiler_input_sha256'] = audit['recipe_sha256']
         audit['recipe_sha256'] = sha(original_recipe)
@@ -184,7 +193,7 @@ def histogram_comparison(target, predicted):
                 scope='full independent test set; clipped display RGB; training anchors reported separately')
 
 
-def diagnostics(output, pc=False, grid_key=None):
+def diagnostics(output, pc=False, grid_key=None, *, model_recipe=None, test_limit=None, include_preview=False, reference_model=None):
     """Evaluate measured samples only; historical runs require refitting anchors."""
     pc=bool(pc or grid_key)
     import numpy as np
@@ -193,11 +202,14 @@ def diagnostics(output, pc=False, grid_key=None):
     def report_metrics(predicted,target):
         m=tonal_comparison(target/16383,predicted/16383)['groups']['all']['metrics']
         return dict(mae_8bit=m['mae'],rmse_8bit=m['rmse'],p95_8bit=m['p95'])
-    recipe, model = __import__('baseline').read_job(output)
+    recipe, model = model_recipe if model_recipe is not None else __import__('baseline').read_job(output)
     baseline = RuntimeColor.from_capture(*__import__('baseline').for_job(output))
     with np.load(output / 'pairs.npz', allow_pickle=False) as pairs:
         measured, split = pairs['input'], pairs['split']
-        test = split == 'test'
+        test = np.flatnonzero(split == 'test')
+        test_total = len(test)
+        if test_limit is not None and len(test) > test_limit:
+            test = test[np.linspace(0,len(test)-1,test_limit,dtype=np.int64)]
         target = pairs['0_target'][test]/16383
         after = white_balance.render_pairs(model,pairs,recipe,test)/16383
         native_after=after.copy()
@@ -210,6 +222,11 @@ def diagnostics(output, pc=False, grid_key=None):
         elif pc:
             from pc_compensation import apply
             after=apply(output,after)
+        saved_after=None
+        if reference_model is not None:
+            saved_after=(native_after.copy() if reference_model is model else
+                         white_balance.render_pairs(reference_model,pairs,recipe,test)/16383)
+            if pc or grid_key:saved_after=apply(output,saved_after)
         fields = None
         if 'anchor_index' in pairs.files:
             import anchor_dataset
@@ -221,6 +238,9 @@ def diagnostics(output, pc=False, grid_key=None):
             before=center_mean(render_native(baseline,x)); predicted=white_balance.render_pairs(model,pairs,recipe,order)
             if pc or grid_key: predicted=apply(output,predicted/16383)*16383
             fields=dict(input=pairs['sensor'][order].tolist(),
+                        input_encoding='black-subtracted normalized RAW sensor channels; not display sRGB',
+                        design=(np.clip(pairs['design_srgb'][order],0,1).tolist() if 'design_srgb' in pairs.files else None),
+                        design_encoding='chart design encoded sRGB [0,1]',
                         target=np.clip(t/16383,0,1).tolist(),
                         before=np.clip(before/16383,0,1).tolist(),
                         after=np.clip(predicted/16383,0,1).tolist(),
@@ -253,7 +273,16 @@ def diagnostics(output, pc=False, grid_key=None):
         from colorchecker24 import NAMES
         cc24=dict(names=NAMES,**{k:fields[k][260:] for k in ['input','target','before','after']},
                   metrics=fields['metrics']['colorchecker24'],included_in_training=True)
-    return dict(sector16=sector_fields,white_balance=recipe.get('white_balance'),histogram=histogram_comparison(target, after), anchors=fields,colorchecker24=cc24,
+    import gamma_diagnostics
+    gamma=gamma_diagnostics.compare(baseline,model)
+    gamma['global_correction']=recipe.get('fitting',{}).get('gamma_global_correction')
+    gamma['baseline_name']='PT' if recipe.get('source',{}).get('dataset_id') in __import__('baseline').PT_IDS else 'ST'
+    gamma['training_constraints']=dict(
+        enabled=bool(recipe.get('fitting',{}).get('search_options',{}).get('gamma_monotone_concave',False)),
+        rules=['nonnegative interval slopes','nonincreasing interval slopes'],
+        sampling='unchanged native nonuniform axis; dark dense, highlights progressively sparse',
+        audit_scope='128 parameter knots before integer expansion/contrast; not per-code second differences')
+    result = dict(native_gamma=gamma,sector16=sector_fields,white_balance=recipe.get('white_balance'),histogram=histogram_comparison(target, after), anchors=fields,colorchecker24=cc24,
                 dataset=json.loads((output/'input_audit.json').read_text()) if (output/'input_audit.json').exists() else None,
                 training_fitting=recipe.get('fitting',{}),
                 pc_sha256=sha((output/'pc_compensation.json').read_bytes()) if pc else None,
@@ -264,6 +293,18 @@ def diagnostics(output, pc=False, grid_key=None):
                 fitting_policy=('原生分阶段：Gamma 灰阶明暗 → CC1 / block13 彩色响应 → '+(('按任务权重联合微调（随机／正色／灰阶／24色'+('／矩阵16色相' if 'sector16' in recipe['fitting']['group_total_weights'] else '')+'：'+ '/'.join(str(recipe['fitting']['group_total_weights'][k]) for k in ('random','primaries','gray','colorchecker24',*(['sector16'] if 'sector16' in recipe['fitting']['group_total_weights'] else [])))+'），不设灰阶优先门槛。') if recipe['fitting'].get('group_total_weights') else '历史灰阶优先约束联合微调。')+('已启用原生参数与 PC 残差交替训练，按补偿后的整条链路选择候选。' if recipe['fitting'].get('pc_compensation_training') else '本任务仅优化原生参数。')) if recipe.get('fitting',{}).get('training_pipeline') else ('历史灰阶优先任务；未使用新版原生分阶段流程。' if recipe.get('fitting',{}).get('gray_priority') else '历史任务：四组等权；重新拟合后应用新版流程。'),
                 tonal=tonal_comparison(target,after),
                 recipe_sha256=sha((output / 'fit/recipe.json').read_bytes()))
+    if include_preview:
+        with np.load(output/'pairs.npz',allow_pickle=False) as pairs:
+            original=center_mean(render_native(baseline,pairs['input'][test]))/16383
+        result['preview']=dict(before=np.clip(original,0,1).tolist(),
+                               target=np.clip(target,0,1).tolist(),
+                               after=np.clip(after,0,1).tolist())
+        if saved_after is not None:
+            result['preview']['saved']=np.clip(saved_after,0,1).tolist()
+            result['saved_tonal']=tonal_comparison(target,saved_after)
+        result['samples']=dict(evaluated=len(test),total_test=test_total,
+                               test_indices=test.tolist(),anchors=len(fields['input']) if fields else 0)
+    return result
 
 
 def tonal_comparison(target, predicted):
