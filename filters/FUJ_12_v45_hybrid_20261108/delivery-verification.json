@@ -1,0 +1,9 @@
+{
+  "batch": "8911457906ba4538b682dee98485a151",
+  "filters": 12,
+  "bytes": 29552,
+  "sha256": "f1e3b1a0120ce3022dfdc811630ce3763fc33889418ece113f4b32c75c2d1eb4",
+  "remote_sha256_equal": true,
+  "configuration_recompile_exact": true,
+  "decode_recompile_exact": true
+}
